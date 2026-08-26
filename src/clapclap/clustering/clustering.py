@@ -20,13 +20,14 @@ class ClusteringMethod:
 class Clustering:
     method: ClusteringMethod
 
-    def __init__(self, limit: int, save: bool, smart_naming: bool, prefix:str, method: ClusteringMethod):
+    def __init__(self, limit: int, save: bool, smart_naming: bool, smart_naming_size: int, smart_naming_sep: str, prefix:str, method: ClusteringMethod):
         self.db = DB()
         self.limit = limit
         self.save = save
         self.method = method
         self.smart_naming = smart_naming
-        self.smart_naming_size = 2
+        self.smart_naming_size = smart_naming_size
+        self.smart_naming_sep = smart_naming_sep
         self.prefix = prefix
 
     def process(self):
@@ -52,8 +53,9 @@ class Clustering:
                 cluster_centroid = np.mean(self.embeddings[cluster_labels == label], axis=0)
                 distances = cdist([cluster_centroid], genres_centroids, metric='cosine')[0]
                 arg_sorted_distances = np.argsort(distances)
-                selected_genres = genres[arg_sorted_distances[0:self.smart_naming_size]]
-                name = ", ".join(selected_genres)
+                selected_indices = arg_sorted_distances[0:self.smart_naming_size]
+                selected_genres = genres[selected_indices]
+                name = self.smart_naming_sep.join(selected_genres)
             else:
                 name = f"C{i}"
 
@@ -79,4 +81,4 @@ class Clustering:
             genres.extend(b)
             genres_embeddings.extend(te.clap(b))
 
-        return genres, genres_embeddings
+        return np.array(genres), np.array(genres_embeddings)
