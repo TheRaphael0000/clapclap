@@ -38,7 +38,7 @@ class Navidrome:
         }
 
 
-    def query_navidrome(self, endpoint: str, extra_params: dict = None) -> dict:
+    def query_navidrome(self, endpoint: str, extra_params: dict = None, content=False) -> dict:
         """Sends a query request to a specific Navidrome API endpoint."""
         url = f"{config.NAVIDROME_URL.rstrip('/')}/rest/{endpoint}"
 
@@ -49,7 +49,11 @@ class Navidrome:
         try:
             logger.debug(url)
             response = requests.get(url, params=params)
+            
             response.raise_for_status()
+
+            if content:
+                return response.content
 
             data = response.json()
             subsonic_response = data.get("subsonic-response", {})
@@ -104,6 +108,10 @@ class Navidrome:
                 return None
             offset += size
 
+    def download(self, songId):
+        return self.query_navidrome("download", {"id": songId}, content=True)
+
+
     def update_ids(self, quick_scan=False, full_scan=False):
         if quick_scan or full_scan:
             self.start_scan(full_scan)
@@ -111,7 +119,7 @@ class Navidrome:
         logger.info("Updating ids")
         lookup_data = []
 
-        libPath = "/music/"
+        libPath = config.NAVIDROME_ROOTDIR
         
         # get the number of songs just for UX, kinda bad but i like it better this way
         for song in tqdm(self.songs_iterator(), desc="Loading navidrome ids", total=self.song_count()):

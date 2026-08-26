@@ -10,8 +10,8 @@ from sqlalchemy.dialects.postgresql import insert
 from torch.utils.data import DataLoader
 
 from clap_dht.db import DB, Embedding
-from clap_dht.updater.audio_feature_extractor import AudioFeatureExtractor
-from clap_dht.updater.filesystem_dataset import FilesystemDataset
+from clap_dht.update.audio_feature_extractor import AudioFeatureExtractor
+from clap_dht.update.dataset import FilesystemDataset, NavidromeDataset
 
 from clap_dht.utils.config import config
 from clap_dht.utils import Timer
@@ -20,17 +20,20 @@ logger = logging.getLogger("UPDATER")
 
 
 class Updater:
-    def __init__(self, batch_size, max_workers, force_process, prefetch_factor, ignore_existing_fingerprint, use_dht):
-        self.root_dir = pathlib.Path(config.DATA_ROOTDIR)
+    def __init__(self, batch_size, max_workers, force_process, prefetch_factor, ignore_existing_fingerprint, navidrome):
         self.db = DB()
 
-        self.dataset = FilesystemDataset(self.root_dir, force_process)
+        if navidrome:
+            self.dataset = NavidromeDataset(force_process)
+        else:
+            self.dataset = FilesystemDataset(force_process)
+            
         self.dataloader = DataLoader(self.dataset, batch_size=batch_size, prefetch_factor=prefetch_factor, num_workers=1)
         self.loader_iter = iter(self.dataloader)
         
         atexit.register(self.stop_dataloader)
         
-        self.audio_feature_extractor = AudioFeatureExtractor(max_workers, ignore_existing_fingerprint, use_dht)
+        self.audio_feature_extractor = AudioFeatureExtractor(max_workers, ignore_existing_fingerprint)
         self.to_save_queue = queue.Queue()
 
 
@@ -51,7 +54,7 @@ class Updater:
                     logger.info(f"Stopping saver process")
                     return
                 
-                i, subpaths, results = data
+                i, subpaths, songIds, albumIds, artistIds, results = data
 
                 with Timer(f"Saving batch {i}", info=True):
                     payload = [
@@ -59,8 +62,11 @@ class Updater:
                             "path": subpath,
                             "fingerprint": fingerprint,
                             "embedding": embedding,
+                            "songId": songId,
+                            "albumId": albumId,
+                            "artistId": artistId,
                         }
-                        for subpath, (fingerprint, embedding) in zip(subpaths, results)
+                        for subpath, songId, albumId, artistId, (fingerprint, embedding) in zip(subpaths, songIds, albumIds, artistIds, results)
                         if embedding is not None
                     ]
 
@@ -84,15 +90,15 @@ class Updater:
 
 
     def start(self):
-        logger.info(f"Stating database update with: {self.root_dir}")
+        logger.info(f"Stating database update with: {type(self.dataset)}")
 
         saver = threading.Thread(target=self.saver)
         saver.start()
 
-        for i, (audio_bytes, subpaths) in enumerate(self.loader_iter):
+        for i, (audio_bytes, subpaths, songIds, albumIds, artistIds) in enumerate(self.loader_iter):
             with Timer(f"Processing batch {i}", info=True):
                 results = self.audio_feature_extractor.process_batch(audio_bytes, subpaths)
-                self.to_save_queue.put((i, subpaths, results))
+                self.to_save_queue.put((i, subpaths, songIds, albumIds, artistIds, results))
 
         self.to_save_queue.put(None)
         saver.join()

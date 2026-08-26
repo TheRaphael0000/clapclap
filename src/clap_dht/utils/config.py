@@ -47,8 +47,8 @@ class Configuration:
     @property
     def DATA_ROOTDIR(self) -> str:
         return self.config("DATA_ROOTDIR", default="/music")
-
-    # --- NAVIDROME ---
+    
+    # --- NAVIDROME ---    
     @property
     def NAVIDROME_URL(self) -> str:
         return self.config("NAVIDROME_URL", default="http://127.0.0.1:4533/")
@@ -64,6 +64,10 @@ class Configuration:
     @property
     def NAVIDROME_DB(self) -> str:
         return self.config("NAVIDROME_DB", default="/navidrome.db")
+    
+    @property
+    def NAVIDROME_ROOTDIR(self) -> str:
+        return self.config("NAVIDROME_ROOTDIR", default="/music")
 
     def default_config_path(self):
         filename = "config.ini"

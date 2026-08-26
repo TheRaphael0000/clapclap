@@ -1,10 +1,11 @@
 import argparse
 
-from clap_dht.updater import add_subparser as add_subparser_updater
+from clap_dht.update import add_subparser as add_subparser_update
 from clap_dht.navidrome import add_subparser as add_subparser_navidrome
 from clap_dht.db import add_subparser as add_subparser_db
 from clap_dht.query import add_subparser as add_subparser_query
 from clap_dht.serve import add_subparser as add_subparser_serve
+from clap_dht.tools import add_subparser as add_subparser_tools
 from clap_dht.utils.config import config
 
 
@@ -27,7 +28,8 @@ def parse():
     add_subparser_navidrome(subparsers)
     add_subparser_query(subparsers)
     add_subparser_serve(subparsers)
-    add_subparser_updater(subparsers)
+    add_subparser_update(subparsers)
+    add_subparser_tools(subparsers)
 
     args = parser.parse_args()
 

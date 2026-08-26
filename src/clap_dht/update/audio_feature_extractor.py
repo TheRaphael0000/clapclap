@@ -15,6 +15,7 @@ from clap_dht.utils import Timer
 from clap_dht.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE, RESAMPLE_MAX_DURATION
 
 transformers.logging.set_verbosity_error()
+# logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger("UPDATER")
 
 
@@ -97,7 +98,7 @@ def resample_with_ffmpeg(audio_bytes):
 
 
 class AudioFeatureExtractor:
-    def __init__(self, max_workers, ignore_existing_fingerprint, use_dht):
+    def __init__(self, max_workers, ignore_existing_fingerprint):
 
         self.max_workers = max_workers
         self.ignore_existing_fingerprint = ignore_existing_fingerprint
@@ -107,8 +108,8 @@ class AudioFeatureExtractor:
         logger.debug(f"Embedding Projection Device: {self.device}")
 
         logger.debug("loading clap model...")
-        self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
-        self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL).to(self.device)
+        self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
+        self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True).to(self.device)
         logger.debug("clap model loaded")
         self.model.eval()
         
