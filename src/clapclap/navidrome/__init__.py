@@ -24,9 +24,27 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     scan_group.add_argument("--full-scan", action="store_true", help="Full-scan before updating")
     update_parser.set_defaults(func=command_update)
 
+    playlist_parser = navidrome_subparsers.add_parser(
+        "playlist", 
+        help="Update playlists",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    playlist_parser.add_argument("regex", default=".*", help="Regex playlists selection")
+    group = playlist_parser.add_mutually_exclusive_group(required=False)
+    group.add_argument("--dry-run", "-n", action="store_true", help="Dry-run of the current playlist selection")
+    group.add_argument("--delete", "-d", action="store_true", help="Delete the selected playlists")
+    playlist_parser.set_defaults(func=command_playlist)
+
 
 def command_update(args):
-    from .navidrome import Navidrome
     logger.debug("command navidrome")
+    from .navidrome import Navidrome
     navidrome = Navidrome()
     navidrome.update_ids(args.quick_scan, args.full_scan)
+
+
+def command_playlist(args):
+    logger.debug("command playlist")
+    from .playlistsManager import PlaylistsManager
+    playlistsManager = PlaylistsManager(regex=args.regex, dry_run=args.dry_run, delete=args.delete)
+    playlistsManager.run()

@@ -113,6 +113,12 @@ class Navidrome:
     def download(self, songId):
         return self.query_navidrome("download", {"id": songId}, content=True)
 
+    def get_playlists(self):
+        return self.query_navidrome("getPlaylists")
+    
+    def delete_playlist(self, id):
+        return self.query_navidrome("deletePlaylist", {"id": id})
+
     def create_playlist(self, name, songIds):
         songIds_batched = itertools.batched(iterable=songIds, n=200)
         first_batch = next(songIds_batched)

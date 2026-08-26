@@ -26,6 +26,7 @@ class Clustering:
         self.save = save
         self.method = method
         self.smart_naming = smart_naming
+        self.smart_naming_size = 2
         self.prefix = prefix
 
     def process(self):
@@ -50,9 +51,9 @@ class Clustering:
             if self.smart_naming:
                 cluster_centroid = np.mean(self.embeddings[cluster_labels == label], axis=0)
                 distances = cdist([cluster_centroid], genres_centroids, metric='cosine')[0]
-                idx = np.argmin(distances)
-                genre = genres[idx]
-                name = genre
+                arg_sorted_distances = np.argsort(distances)
+                selected_genres = genres[arg_sorted_distances[0:self.smart_naming_size]]
+                name = ", ".join(selected_genres)
             else:
                 name = f"C{i}"
 
