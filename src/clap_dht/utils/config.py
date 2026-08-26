@@ -69,6 +69,10 @@ class Configuration:
     def NAVIDROME_ROOTDIR(self) -> str:
         return self.config("NAVIDROME_ROOTDIR", default="/music")
 
+    @property
+    def NAVIDROME_PLAYLISTPREFIX(self) -> str:
+        return self.config("NAVIDROME_PLAYLISTPREFIX", default="")
+    
     def default_config_path(self):
         filename = "config.ini"
         try:

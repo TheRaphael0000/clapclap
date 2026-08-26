@@ -112,7 +112,7 @@ class Navidrome:
         return self.query_navidrome("download", {"id": songId}, content=True)
 
     def create_playlist(self, name, songIds):
-        return self.query_navidrome("createPlaylist", {"name": name, "songId": songIds}, content=True)
+        return self.query_navidrome("createPlaylist", {"name": config.NAVIDROME_PLAYLISTPREFIX + name, "songId": songIds}, content=True)
 
 
     def update_ids(self, quick_scan=False, full_scan=False):
