@@ -17,6 +17,8 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     query_subparser.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
     query_subparser.add_argument("--limit", "-l", type=int, default=20, help="Number of results")
     query_subparser.add_argument("--temperature", "-t", type=float, default=0, help="Standard deviation of the noise to add to the centroid [0,1]")
+    query_subparser.add_argument("--save", "-s", type=str, help="Save to navidrome playlist")
+
     query_subparsers = query_subparser.add_subparsers(required=True)
 
     query_similarity_parser = query_subparsers.add_parser(
@@ -41,19 +43,21 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     query_text_parser.set_defaults(func=query_text_command)
 
 
-def print_query(query, args):
+def process_query(query, args):
     if args.json:
         print(query.get_json())
     else:
         print(query.get_text())
+    if args.save:
+        query.save_to_playlist(args.save)
 
 def similarity_command(args):
     query = SimilarityQuery(limit=args.limit, temperature=args.temperature, path=args.path, songId=args.songId, albumId=args.albumId, artistId=args.artistId)
-    print_query(query, args)
+    process_query(query, args)
 
 
 def query_text_command(args):
     from .text_query import TextQuery
     query = TextQuery(limit=args.limit, temperature=args.temperature, text=args.text)
-    print_query(query, args)
+    process_query(query, args)
 

@@ -4,6 +4,7 @@ from sqlalchemy import select, func
 import numpy as np
 
 from clap_dht.db import DB, Embedding
+from clap_dht.navidrome.navidrome import Navidrome
 
 logger = logging.getLogger("QUERY")
 
@@ -18,18 +19,29 @@ class Query:
         self.proximity_function = Embedding.embedding.cosine_distance
         self.order_by_factor = 1
         logger.debug(f"Query limit={limit}, temperature={temperature}")
+        self.results = None
 
     def __str__(self):
         return self.get_text()
 
+    def save_to_playlist(self, name):
+        self.ensure_results()
+        navidrome = Navidrome()
+        ids = [embedding.songId for embedding, _ in self.results]
+        navidrome.create_playlist(name=name, songIds=ids)
+
+    def ensure_results(self):
+        if self.results is None:
+            self.results = self.get()
+
     def get_text(self):
-        results = self.get()
-        output = [f"{score:4f} - '{embedding.path}'" for embedding, score in results]
+        self.ensure_results()
+        output = [f"{score:4f} - '{embedding.path}'" for embedding, score in self.results]
         return "\n".join(output)
 
     def get_json(self):
-        results = self.get()
-        output = [{"path": embedding.path, "songId": embedding.songId, "albumId": embedding.albumId, "artistId": embedding.artistId, "score": score} for embedding, score in results]
+        self.ensure_results()
+        output = [{"path": embedding.path, "songId": embedding.songId, "albumId": embedding.albumId, "artistId": embedding.artistId, "score": score} for embedding, score in self.results]
         return output
 
     def query_similar(self, embedding):
