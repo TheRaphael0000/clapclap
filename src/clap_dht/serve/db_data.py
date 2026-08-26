@@ -1,5 +1,5 @@
 from clap_dht.db import DB
-from clap_dht.query.query import Query
+from clap_dht.query.similarity_query import SimilarityQuery
 
 
 class DBDATA:
@@ -8,7 +8,7 @@ class DBDATA:
         pass
 
     def info(self):
-        embeddings = Query.count()
+        embeddings = SimilarityQuery.count()
         return {
             "db": {
                 "embeddings": embeddings,

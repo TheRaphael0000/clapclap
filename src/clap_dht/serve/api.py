@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Request
 import uvicorn
 
 from clap_dht.db import DB
-from clap_dht.query import Query
+from clap_dht.query import SimilarityQuery
 from clap_dht.serve.db_data import DBDATA
 from clap_dht.serve.dht_db import DHTDB
 
@@ -39,11 +39,12 @@ def create_app(with_dht):
 
 
     @app.get("/similar_songs")
-    async def route_query(request: Request, songId: str = None, albumId: str = None, artistId: str = None, proximity: ProximityFunctions = ProximityFunctions.cosine_distance, limit: int = 100, temperature=0):
+    async def route_query(request: Request, limit: int = 100, temperature: float = 0, songId: str = None, albumId: str = None, artistId: str = None):
         try:
-            query = Query(songId=songId, albumId=albumId, artistId=artistId, json=True, limit=limit, proximity_function=proximity.value, temperature=temperature)
+            query = SimilarityQuery(limit=limit, temperature=temperature, songId=songId, albumId=albumId, artistId=artistId)
             return query.get_json()
         except Exception as e:
+            logger.debug(e)
             raise HTTPException(status_code=404, detail=str(e))
 
     # create_app() return
@@ -51,11 +52,11 @@ def create_app(with_dht):
 
 
 class API:
-    def __init__(self, host, port, no_dht):
+    def __init__(self, host, port):
         DB() # to ensure connection to the db before starting the app
         self.host = host
         self.port = port
-        self.no_dht = no_dht
+        self.no_dht = True
         self.app, self.dht_node = create_app(not self.no_dht)
 
  

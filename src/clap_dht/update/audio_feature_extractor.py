@@ -108,8 +108,8 @@ class AudioFeatureExtractor:
         logger.debug(f"Embedding Projection Device: {self.device}")
 
         logger.debug("loading clap model...")
-        self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
-        self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True).to(self.device)
+        self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
+        self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL).to(self.device)
         logger.debug("clap model loaded")
         self.model.eval()
         

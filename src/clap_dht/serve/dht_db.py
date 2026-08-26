@@ -3,7 +3,7 @@ import asyncio
 from sqlalchemy import select
 
 from clap_dht.db import DB, Embedding
-from clap_dht.query.query import Query
+from clap_dht.query.similarity_query import SimilarityQuery
 from clap_dht.serve.dht_node import DHTNode
 import io
 import numpy as np

@@ -111,6 +111,9 @@ class Navidrome:
     def download(self, songId):
         return self.query_navidrome("download", {"id": songId}, content=True)
 
+    def create_playlist(self, name, songIds):
+        return self.query_navidrome("createPlaylist", {"name": name, "songId": songIds}, content=True)
+
 
     def update_ids(self, quick_scan=False, full_scan=False):
         if quick_scan or full_scan:
