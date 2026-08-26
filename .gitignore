@@ -18,3 +18,5 @@ data*/
 *.zip
 
 *.ipynb
+
+*.lock

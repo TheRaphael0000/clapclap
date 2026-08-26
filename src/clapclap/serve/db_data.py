@@ -1,5 +1,5 @@
-from clap_dht.db import DB
-from clap_dht.query.similarity_query import SimilarityQuery
+from clapclap.db import DB
+from clapclap.query.similarity_query import SimilarityQuery
 
 
 class DBDATA:

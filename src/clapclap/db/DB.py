@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from clap_dht.utils.config import config
+from clapclap.utils.config import config
 from .Base import Base
 
 import logging

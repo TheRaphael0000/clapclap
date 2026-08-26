@@ -3,11 +3,11 @@ import os
 import requests
 from sqlalchemy import select, update, func
 
-from clap_dht.db import DB, Embedding
+from clapclap.db import DB, Embedding
 
 import logging
 
-from clap_dht.utils.config import config
+from clapclap.utils.config import config
 logger = logging.getLogger("NAVIDROME")
 
 from tqdm import tqdm
@@ -33,7 +33,7 @@ class Navidrome:
             "t": token,
             "s": salt,
             "v": "1.16.1",
-            "c": "clap_dht",
+            "c": "clapclap",
             "f": "json",
         }
 
@@ -135,7 +135,7 @@ class Navidrome:
             paths = session.scalars(select(Embedding.path)).all()
             lookup_data = [r for r in lookup_data if r["path"] in paths]
 
-            logger.info("Updating CLAP_DHT DB")
+            logger.info("Updating DB")
             session.execute(update(Embedding), lookup_data)
             session.commit()
 

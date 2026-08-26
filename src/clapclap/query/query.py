@@ -3,8 +3,8 @@ import logging
 from sqlalchemy import select, func
 import numpy as np
 
-from clap_dht.db import DB, Embedding
-from clap_dht.navidrome.navidrome import Navidrome
+from clapclap.db import DB, Embedding
+from clapclap.navidrome.navidrome import Navidrome
 
 logger = logging.getLogger("QUERY")
 

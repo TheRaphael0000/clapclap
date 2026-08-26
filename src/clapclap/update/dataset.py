@@ -6,12 +6,12 @@ import filetype
 
 from torch.utils.data import IterableDataset
 
-from clap_dht.db import DB, Embedding
-from clap_dht.utils.config import config
+from clapclap.db import DB, Embedding
+from clapclap.utils.config import config
 
 import logging
 
-from clap_dht.navidrome.navidrome import Navidrome
+from clapclap.navidrome.navidrome import Navidrome
 logger = logging.getLogger("UPDATER")
 
 class DBChecker:

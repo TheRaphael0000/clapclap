@@ -77,11 +77,11 @@ class Configuration:
         filename = "config.ini"
         try:
             from platformdirs import user_config_dir
-            config_dir = Path(user_config_dir(appname="clap_dht", appauthor=False))
+            config_dir = Path(user_config_dir(appname="clapclap", appauthor=False))
             config_dir.mkdir(parents=True, exist_ok=True)
             return str(config_dir / filename)
         except:
             logger.info("User directory not available")
-            return f"/etc/clap_dht/{filename}"
+            return f"/etc/clapclap/{filename}"
 
 config = Configuration()

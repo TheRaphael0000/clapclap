@@ -11,8 +11,8 @@ from tinytag import TinyTag
 import transformers
 from transformers import ClapAudioModelWithProjection, ClapProcessor
 
-from clap_dht.utils import Timer
-from clap_dht.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE, RESAMPLE_MAX_DURATION
+from clapclap.utils import Timer
+from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE, RESAMPLE_MAX_DURATION
 
 transformers.logging.set_verbosity_error()
 # logging.getLogger("httpx").setLevel(logging.WARNING)

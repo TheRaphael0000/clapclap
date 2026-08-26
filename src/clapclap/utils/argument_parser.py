@@ -1,17 +1,17 @@
 import argparse
 
-from clap_dht.update import add_subparser as add_subparser_update
-from clap_dht.navidrome import add_subparser as add_subparser_navidrome
-from clap_dht.db import add_subparser as add_subparser_db
-from clap_dht.query import add_subparser as add_subparser_query
-from clap_dht.serve import add_subparser as add_subparser_serve
-from clap_dht.tools import add_subparser as add_subparser_tools
-from clap_dht.utils.config import config
+from clapclap.update import add_subparser as add_subparser_update
+from clapclap.navidrome import add_subparser as add_subparser_navidrome
+from clapclap.db import add_subparser as add_subparser_db
+from clapclap.query import add_subparser as add_subparser_query
+from clapclap.serve import add_subparser as add_subparser_serve
+from clapclap.tools import add_subparser as add_subparser_tools
+from clapclap.utils.config import config
 
 
 def parse():
     parser = argparse.ArgumentParser(
-        prog="CLAP DHT CLI",
+        prog="Clapclap CLI",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--debug", action="store_true", help="Show debug logs")

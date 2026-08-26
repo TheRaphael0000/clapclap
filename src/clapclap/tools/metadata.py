@@ -4,8 +4,8 @@ import pathlib
 
 from tinytag import TinyTag
 
-from clap_dht.update.dataset import FilesystemDatasetAll
-from clap_dht.utils.config import config
+from clapclap.update.dataset import FilesystemDatasetAll
+from clapclap.utils.config import config
 
 import logging
 logger = logging.getLogger("METADATA")

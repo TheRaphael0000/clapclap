@@ -1,7 +1,7 @@
 import logging
 
-from clap_dht.query.query import Query
-from clap_dht.update.text_feature_extractor import TextFeatureExtractor
+from clapclap.query.query import Query
+from clapclap.update.text_feature_extractor import TextFeatureExtractor
 
 
 logger = logging.getLogger("QUERY")

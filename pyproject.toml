@@ -1,7 +1,7 @@
 [project]
-name = "clap_dht"
+name = "clapclap"
 version = "0.1.0"
-description = "Add your description here"
+description = "A CLAP CLI for navidrome"
 readme = "README.md"
 requires-python = ">=3.13"
 maintainers = [
@@ -31,11 +31,11 @@ full = [
 ]
 
 [project.scripts]
-clap_dht = "clap_dht.cli:main"
+clapclap = "clapclap.cli:main"
 
 [build-system]
 requires = ["hatchling >= 1.26"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/clap_dht"]
+packages = ["src/clapclap"]

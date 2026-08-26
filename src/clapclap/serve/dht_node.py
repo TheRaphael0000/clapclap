@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import opendht.aio as dht
 
-from clap_dht.utils.config import config
+from clapclap.utils.config import config
 
 logger = logging.getLogger("DHT")
 

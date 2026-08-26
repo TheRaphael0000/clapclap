@@ -1,8 +1,8 @@
 import os
 import signal
 import logging
-from clap_dht.utils.config import config
-from clap_dht.utils.argument_parser import parse
+from clapclap.utils.config import config
+from clapclap.utils.argument_parser import parse
 
 
 def exit_all(sig, frame):

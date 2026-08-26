@@ -5,8 +5,8 @@ import transformers
 from transformers import AutoTokenizer, ClapTextModelWithProjection
 from torch.utils.data import DataLoader, IterableDataset
 
-from clap_dht.utils import Timer
-from clap_dht.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
+from clapclap.utils import Timer
+from clapclap.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
 
 transformers.logging.set_verbosity_error()
 logger = logging.getLogger("UPDATER")
@@ -41,7 +41,7 @@ class GenreDataset(IterableDataset):
         pass
 
     def __iter__(self):
-        with open("src/clap_dht/utils/musicbrainz_genres.txt", "r") as f:
+        with open("src/clapclap/utils/musicbrainz_genres.txt", "r") as f:
             for row in f:
                 yield row.replace("\n", "")
 

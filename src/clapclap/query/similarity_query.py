@@ -4,8 +4,8 @@ from sqlalchemy import select, func
 from pgvector.sqlalchemy import avg
 import numpy as np
 
-from clap_dht.db import DB, Embedding
-from clap_dht.query.query import Query
+from clapclap.db import DB, Embedding
+from clapclap.query.query import Query
 
 logger = logging.getLogger("QUERY")
 

@@ -3,10 +3,10 @@ import logging
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
 
-from clap_dht.db import DB
-from clap_dht.query import SimilarityQuery
-from clap_dht.serve.db_data import DBDATA
-from clap_dht.serve.dht_db import DHTDB
+from clapclap.db import DB
+from clapclap.query import SimilarityQuery
+from clapclap.serve.db_data import DBDATA
+from clapclap.serve.dht_db import DHTDB
 
 logger = logging.getLogger("API")
 

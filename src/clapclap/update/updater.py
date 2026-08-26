@@ -9,12 +9,12 @@ from sqlalchemy.dialects.postgresql import insert
 
 from torch.utils.data import DataLoader
 
-from clap_dht.db import DB, Embedding
-from clap_dht.update.audio_feature_extractor import AudioFeatureExtractor
-from clap_dht.update.dataset import FilesystemDataset, NavidromeDataset
+from clapclap.db import DB, Embedding
+from clapclap.update.audio_feature_extractor import AudioFeatureExtractor
+from clapclap.update.dataset import FilesystemDataset, NavidromeDataset
 
-from clap_dht.utils.config import config
-from clap_dht.utils import Timer
+from clapclap.utils.config import config
+from clapclap.utils import Timer
 
 logger = logging.getLogger("UPDATER")
 
