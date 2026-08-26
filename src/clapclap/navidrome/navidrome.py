@@ -1,11 +1,13 @@
 import hashlib
 import os
+import itertools
+import logging
+
 import requests
 from sqlalchemy import select, update, func
 
 from clapclap.db import DB, Embedding
 
-import logging
 
 from clapclap.utils.config import config
 logger = logging.getLogger("NAVIDROME")
@@ -112,7 +114,17 @@ class Navidrome:
         return self.query_navidrome("download", {"id": songId}, content=True)
 
     def create_playlist(self, name, songIds):
-        return self.query_navidrome("createPlaylist", {"name": config.NAVIDROME_PLAYLISTPREFIX + name, "songId": songIds}, content=True)
+        songIds_batched = itertools.batched(iterable=songIds, n=200)
+        first_batch = next(songIds_batched)
+        playlist = self.query_navidrome("createPlaylist", {"name": f"{config.NAVIDROME_PLAYLISTPREFIX}{name}", "songId": first_batch})
+
+        playlistId = playlist["playlist"]["id"]
+
+        for batch in songIds_batched:
+            self.update_playlist(playlistId=playlistId, songIdToAdd=batch)
+
+    def update_playlist(self, playlistId, songIdToAdd):
+        return self.query_navidrome("updatePlaylist", {"playlistId": playlistId, "songIdToAdd": songIdToAdd})
 
 
     def update_ids(self, quick_scan=False, full_scan=False):

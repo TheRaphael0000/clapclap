@@ -1,6 +1,7 @@
 import argparse
 
 from clapclap.update import add_subparser as add_subparser_update
+from clapclap.clustering import add_subparser as add_subparser_clustering
 from clapclap.navidrome import add_subparser as add_subparser_navidrome
 from clapclap.db import add_subparser as add_subparser_db
 from clapclap.query import add_subparser as add_subparser_query
@@ -25,6 +26,7 @@ def parse():
     )
 
     add_subparser_db(subparsers)
+    add_subparser_clustering(subparsers)
     add_subparser_navidrome(subparsers)
     add_subparser_query(subparsers)
     add_subparser_serve(subparsers)

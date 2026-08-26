@@ -20,6 +20,7 @@ dependencies = [
     "uvicorn>=0.52.0",
     "u-msgpack-python>=2.8.0",
     "python-decouple>=3.8",
+    "scipy>=1.18.1",
 ]
 
 [project.optional-dependencies]
