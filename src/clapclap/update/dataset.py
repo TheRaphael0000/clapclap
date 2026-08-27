@@ -1,9 +1,11 @@
+from dataclasses import dataclass
 import os
 import pathlib
 
 from sqlalchemy import exists, select
 import filetype
 
+import torch
 from torch.utils.data import IterableDataset
 
 from clapclap.db import DB, Embedding
@@ -25,7 +27,6 @@ class DBChecker:
                 return True
         return False
 
-
 class NavidromeDataset(IterableDataset):
     def __init__(self, force_process):
         self.root_dir = pathlib.Path(config.NAVIDROME_ROOTDIR)
@@ -46,7 +47,13 @@ class NavidromeDataset(IterableDataset):
 
             audio_bytes = navidrome.download(songId=s["id"])
             logger.info(f"Loaded: '{subpath}'")
-            yield audio_bytes, subpath, s["id"], s["albumId"], s["artistId"]
+            yield {
+                "audio_bytes":audio_bytes,
+                "subpath":subpath,
+                "songId":s["id"],
+                "albumId": s["albumId"],
+                "artistId": s["artistId"],
+            }
 
 
 class FilesystemDatasetAll(IterableDataset):
@@ -96,4 +103,11 @@ class FilesystemDataset(IterableDataset):
             audio_bytes = open(fullpath, "rb").read()
 
             logger.info(f"Loaded: '{subpath}'")
-            yield audio_bytes, subpath, None, None, None
+            
+            yield {
+                "audio_bytes":audio_bytes,
+                "subpath":subpath,
+                "songId": "",
+                "albumId": "",
+                "artistId": "",
+            }

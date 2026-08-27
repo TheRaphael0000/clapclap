@@ -46,7 +46,7 @@ class Configuration:
     # --- DATA ---
     @property
     def DATA_ROOTDIR(self) -> str:
-        return self.config("DATA_ROOTDIR", default="/music")
+        return self.config("DATA_ROOTDIR", default="/music/")
     
     # --- NAVIDROME ---    
     @property
@@ -67,7 +67,7 @@ class Configuration:
     
     @property
     def NAVIDROME_ROOTDIR(self) -> str:
-        return self.config("NAVIDROME_ROOTDIR", default="/music")
+        return self.config("NAVIDROME_ROOTDIR", default="/music/")
 
     @property
     def NAVIDROME_PLAYLISTPREFIX(self) -> str:

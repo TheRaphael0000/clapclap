@@ -62,9 +62,9 @@ class Updater:
                             "path": subpath,
                             "fingerprint": fingerprint,
                             "embedding": embedding,
-                            "songId": songId,
-                            "albumId": albumId,
-                            "artistId": artistId,
+                            "songId": songId if songId != "" else None,
+                            "albumId": albumId if albumId != "" else None,
+                            "artistId": artistId if artistId != "" else None,
                         }
                         for subpath, songId, albumId, artistId, (fingerprint, embedding) in zip(subpaths, songIds, albumIds, artistIds, results)
                         if embedding is not None
@@ -95,10 +95,11 @@ class Updater:
         saver = threading.Thread(target=self.saver)
         saver.start()
 
-        for i, (audio_bytes, subpaths, songIds, albumIds, artistIds) in enumerate(self.loader_iter):
+        for i, batch in enumerate(self.loader_iter):
             with Timer(f"Processing batch {i}", info=True):
-                results = self.audio_feature_extractor.process_batch(audio_bytes, subpaths)
-                self.to_save_queue.put((i, subpaths, songIds, albumIds, artistIds, results))
+                results = self.audio_feature_extractor.process_batch(batch["audio_bytes"], batch["subpath"])
+                
+                self.to_save_queue.put((i, batch["subpath"], batch["songId"], batch["albumId"], batch["artistId"], results))
 
         self.to_save_queue.put(None)
         saver.join()

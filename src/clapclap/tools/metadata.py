@@ -1,11 +1,6 @@
-
-
-import pathlib
-
 from tinytag import TinyTag
 
 from clapclap.update.dataset import FilesystemDatasetAll
-from clapclap.utils.config import config
 
 import logging
 logger = logging.getLogger("METADATA")
