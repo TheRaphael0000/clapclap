@@ -5,7 +5,7 @@ services:
             - .env
         environment:
             - POSTGRES_HOST=db:5432
-        command: ["serve", "--no-dht"]
+        command: ["serve"]
         depends_on:
             - db
         ports:
