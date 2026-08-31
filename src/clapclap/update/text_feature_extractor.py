@@ -3,14 +3,17 @@ import logging
 import torch
 import transformers
 from transformers import AutoTokenizer, ClapTextModelWithProjection
-from torch.utils.data import DataLoader, IterableDataset, Dataset
-from clapclap.utils.genres import everynoise_genres, musicbrainz_genres
+from torch.utils.data import DataLoader, Dataset
+from clapclap.utils.musicbrainz_genres import musicbrainz_genres
+from clapclap.utils.everynoise_genres import everynoise_genres
+from clapclap.utils.types import GenresList
 
 from clapclap.utils import Timer
 from clapclap.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
 
 transformers.logging.set_verbosity_error()
 logger = logging.getLogger("UPDATER")
+
 
 class TextFeatureExtractor:
     def __init__(self):
@@ -38,41 +41,20 @@ class TextFeatureExtractor:
         return embeddings
 
 class GenreDataset(Dataset):
-    def __init__(self):
-        self.genres = list(set(everynoise_genres) | set(musicbrainz_genres))
+    def __init__(self, genres_list: GenresList):
+        genres = set()
+        if genres_list == "everynoise" or genres_list == "all":
+            genres |= set(everynoise_genres)
+        if genres_list == "everynoise-100" or genres_list == "all":
+            genres |= set(everynoise_genres[0:100])
+        if genres_list == "everynoise-1000" or genres_list == "all":
+            genres |= set(everynoise_genres[0:1000])
+        if genres_list == "musicbrainz" or genres_list == "all":
+            genres |= set(musicbrainz_genres)
+        self.genres = list(genres)
 
     def __len__(self):
         return len(self.genres)
 
     def __getitem__(self, idx):
-        return f'{self.genres[idx]}'
-
-
-if __name__ == "__main__":
-    te = TextFeatureExtractor()
-    from scipy.spatial.distance import pdist, squareform
-    import itertools
-    import pandas as pd
-
-
-    ds = GenreDataset()
-    dl = DataLoader(ds, batch_size=128)
-
-    embeddings = []
-    labels = []
-    for i, b in enumerate(dl):
-        print(f"Batch {i}")
-        labels.extend(b)
-        embeddings.extend(te.clap(b))
-
-    print("distance")
-
-
-    dist_matrix = squareform(pdist(embeddings, metric='cosine'))
-
-    df = pd.DataFrame(dist_matrix, index=labels, columns=labels)
-
-    print(df["pop"].sort_values())
-    # df.to_html("distance_matrix.html", float_format=lambda x: f"{x:.3f}")
-
-    # print(df)
+        return self.genres[idx]

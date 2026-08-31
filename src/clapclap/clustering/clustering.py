@@ -6,6 +6,7 @@ from scipy.spatial.distance import cdist
 
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
+from clapclap.utils.types import GenresList
 
 logger = logging.getLogger("CLUSTERING")
 
@@ -20,7 +21,7 @@ class ClusteringMethod:
 class Clustering:
     method: ClusteringMethod
 
-    def __init__(self, limit: int, save: bool, smart_naming: bool, smart_naming_size: int, smart_naming_sep: str, prefix:str, method: ClusteringMethod):
+    def __init__(self, limit: int, save: bool, smart_naming: bool, smart_naming_size: int, smart_naming_sep: str, prefix:str, method: ClusteringMethod, genres_list: GenresList):
         self.db = DB()
         self.limit = limit
         self.save = save
@@ -29,6 +30,7 @@ class Clustering:
         self.smart_naming_size = smart_naming_size
         self.smart_naming_sep = smart_naming_sep
         self.prefix = prefix
+        self.genres_list = genres_list
 
     def process(self):
         logger.info("Loading embeddings")
@@ -66,12 +68,14 @@ class Clustering:
 
 
     def compute_genres_centroids(self):
-        logger.info("Computing labels centroids")
         from clapclap.update.text_feature_extractor import TextFeatureExtractor, GenreDataset
-        te = TextFeatureExtractor()
         from torch.utils.data import DataLoader
 
-        ds = GenreDataset()
+        ds = GenreDataset(self.genres_list)
+
+        logger.info(f"Computing labels centroids, {self.genres_list} ({len(ds)} genres)")
+        te = TextFeatureExtractor()
+
         dl = DataLoader(ds, batch_size=128)
 
         genres_embeddings = []
