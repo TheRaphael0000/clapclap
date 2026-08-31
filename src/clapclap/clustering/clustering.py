@@ -39,6 +39,7 @@ class Clustering:
             self.embeddings = np.array(self.embeddings)
             self.songIds = np.array(self.songIds)
 
+        logger.info("Computing clusters")
         cluster_labels = self.method.get_cluster_labels(self.embeddings)
 
         if self.smart_naming:
@@ -70,7 +71,6 @@ class Clustering:
         te = TextFeatureExtractor()
         from torch.utils.data import DataLoader
 
-
         ds = GenreDataset()
         dl = DataLoader(ds, batch_size=128)
 
@@ -79,6 +79,8 @@ class Clustering:
         for i, b in enumerate(dl):
             logger.debug(f"Batch {i}")
             genres.extend(b)
+            # add quotes to ensure multi-word genre embeddings are correctly computed 
+            b = [f'"{bi}"' for bi in b]
             genres_embeddings.extend(te.clap(b))
 
         return np.array(genres), np.array(genres_embeddings)
