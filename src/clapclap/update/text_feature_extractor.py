@@ -6,6 +6,7 @@ from transformers import AutoTokenizer, ClapTextModelWithProjection
 from torch.utils.data import DataLoader, Dataset
 from clapclap.utils.musicbrainz_genres import musicbrainz_genres
 from clapclap.utils.everynoise_genres import everynoise_genres
+from clapclap.utils.macro_genres import macro_genres
 from clapclap.utils.types import GenresList
 
 from clapclap.utils import Timer
@@ -39,6 +40,16 @@ class TextFeatureExtractor:
             for r in result:
                 embeddings.append(r)
         return embeddings
+
+class MacroGenreDataset(Dataset):
+    def __init__(self):
+        self.genres = macro_genres
+
+    def __len__(self):
+        return len(self.genres)
+
+    def __getitem__(self, idx):
+        return self.genres[idx]
 
 class GenreDataset(Dataset):
     def __init__(self, genres_list: GenresList):

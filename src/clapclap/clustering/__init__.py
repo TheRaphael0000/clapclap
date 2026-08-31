@@ -23,10 +23,11 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     smart_naming_group = clustering_subparser.add_mutually_exclusive_group(required=False)
     smart_naming_group.add_argument("--no-smart-naming", action="store_true", help="Disable playlist smart-naming")
     smart_naming_group_arguments = smart_naming_group.add_mutually_exclusive_group(required=False)
+    smart_naming_group_arguments.add_argument("--smart-naming-no-macro-genre", action="store_true", help="Disable macro genre names")
     smart_naming_group_arguments.add_argument("--smart-naming-size", type=int, default=2, help="Number of genres for the smart-naming")
-    smart_naming_group_arguments.add_argument("--smart-naming-sep", type=str, default="|", help="Smart naming separator")
+    smart_naming_group_arguments.add_argument("--smart-naming-sep", type=str, default=",", help="Smart naming separator")
     smart_naming_group_arguments.add_argument("--smart-naming-list", type=str, choices=get_args(GenresList), default="musicbrainz", help="Genres List")
-    clustering_subparser.add_argument("--prefix", "-p", default="clusters/", type=str, help="Playlist name prefix")
+    clustering_subparser.add_argument("--prefix", "-p", default="cc/", type=str, help="Playlist name prefix")
 
     clustering_subparsers = clustering_subparser.add_subparsers(required=True)
 
@@ -41,6 +42,6 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 def kmean_command(args):
     from clapclap.clustering.kmeans import KMeansClustering
-    clustering = Clustering(limit=args.limit, save=args.save, smart_naming=not args.no_smart_naming, smart_naming_size=args.smart_naming_size, smart_naming_sep=args.smart_naming_sep, prefix=args.prefix, method=KMeansClustering(k=args.n_clusters), genres_list=args.smart_naming_list)
+    clustering = Clustering(limit=args.limit, save=args.save, smart_naming=not args.no_smart_naming, smart_naming_size=args.smart_naming_size, smart_naming_sep=args.smart_naming_sep, prefix=args.prefix, method=KMeansClustering(k=args.n_clusters), smart_naming_macro_genre=not args.smart_naming_no_macro_genre, genres_list=args.smart_naming_list)
     clustering.process()
 

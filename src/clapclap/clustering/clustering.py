@@ -2,8 +2,7 @@ import logging
 import numpy as np
 from sqlalchemy import select
 
-from scipy.spatial.distance import cdist
-
+from clapclap.clustering.smartnaming import SmartNaming
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
 from clapclap.utils.types import GenresList
@@ -21,16 +20,18 @@ class ClusteringMethod:
 class Clustering:
     method: ClusteringMethod
 
-    def __init__(self, limit: int, save: bool, smart_naming: bool, smart_naming_size: int, smart_naming_sep: str, prefix:str, method: ClusteringMethod, genres_list: GenresList):
+    def __init__(self, limit: int, save: bool, smart_naming: bool, smart_naming_size: int, smart_naming_sep: str, smart_naming_macro_genre: bool, prefix:str, method: ClusteringMethod, genres_list: GenresList):
         self.db = DB()
         self.limit = limit
         self.save = save
         self.method = method
         self.smart_naming = smart_naming
-        self.smart_naming_size = smart_naming_size
-        self.smart_naming_sep = smart_naming_sep
         self.prefix = prefix
         self.genres_list = genres_list
+        
+        if self.smart_naming:
+            self.smart_naming = SmartNaming(smart_naming_size, smart_naming_sep, smart_naming_macro_genre, genres_list)
+
 
     def process(self):
         logger.info("Loading embeddings")
@@ -44,9 +45,6 @@ class Clustering:
         logger.info("Computing clusters")
         cluster_labels = self.method.get_cluster_labels(self.embeddings)
 
-        if self.smart_naming:
-            genres, genres_centroids = self.compute_genres_centroids()
-
         logger.info("Creating playlists")
         navidrome = Navidrome()
         for i, label in enumerate(np.unique(cluster_labels)):
@@ -54,11 +52,7 @@ class Clustering:
 
             if self.smart_naming:
                 cluster_centroid = np.mean(self.embeddings[cluster_labels == label], axis=0)
-                distances = cdist([cluster_centroid], genres_centroids, metric='cosine')[0]
-                arg_sorted_distances = np.argsort(distances)
-                selected_indices = arg_sorted_distances[0:self.smart_naming_size]
-                selected_genres = genres[selected_indices]
-                name = self.smart_naming_sep.join(selected_genres)
+                name = self.smart_naming.get_name(centroid=cluster_centroid)
             else:
                 name = f"C{i}"
 
@@ -67,24 +61,3 @@ class Clustering:
 
 
 
-    def compute_genres_centroids(self):
-        from clapclap.update.text_feature_extractor import TextFeatureExtractor, GenreDataset
-        from torch.utils.data import DataLoader
-
-        ds = GenreDataset(self.genres_list)
-
-        logger.info(f"Computing labels centroids, {self.genres_list} ({len(ds)} genres)")
-        te = TextFeatureExtractor()
-
-        dl = DataLoader(ds, batch_size=128)
-
-        genres_embeddings = []
-        genres = []
-        for i, b in enumerate(dl):
-            logger.debug(f"Batch {i}")
-            genres.extend(b)
-            # add quotes to ensure multi-word genre embeddings are correctly computed 
-            b = [f'"{bi}"' for bi in b]
-            genres_embeddings.extend(te.clap(b))
-
-        return np.array(genres), np.array(genres_embeddings)
