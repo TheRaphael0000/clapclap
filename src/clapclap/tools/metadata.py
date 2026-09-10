@@ -5,6 +5,17 @@ from clapclap.update.dataset import FilesystemDatasetAll
 import logging
 logger = logging.getLogger("METADATA")
 
+def get_tag(tinytag, tag):
+    results = []
+    if tag in tinytag.other:
+        for value in tinytag.other[tag]:
+            if value is None:
+                continue
+            results.append(value)
+    return results
+
+
+
 class Metadata:
     def __init__(self, fingerprint, replaygain):
         self.fingerprint = fingerprint
@@ -14,20 +25,15 @@ class Metadata:
             raise Exception("Please select at least one tool checker")
         self.dataset = FilesystemDatasetAll()
 
-    def fingerprint_in_tags(self, file):
-        tags = TinyTag.get(filename=file)
-        possible_keys = ["acoustid_fingerprint"]
-
-        for pk in possible_keys:
-            if pk in tags.other:
-                for base64_value in tags.other[pk]:
-                    if base64_value is None:
-                        continue
-                    return base64_value
-        return None
 
     def run(self):
-        for subpath, fullpath in self.dataset:
+        for subpath, fullpath, _, _, _ in self.dataset:
+            tinytag = TinyTag.get(filename=fullpath)
             if self.fingerprint:
-                if self.fingerprint_in_tags(fullpath) is None:
-                    logger.info(f"fingerprint missing for {subpath}")
+                tag = get_tag(tinytag, "acoustid_fingerprint")
+                if len(tag) <= 0:
+                    print(f"fingerprint missing for {subpath}")
+            if self.replaygain:
+                tag = get_tag(tinytag, "replaygain_track_gain")
+                if len(tag) <= 0:
+                    print(f"replaygain missing for {subpath}")
