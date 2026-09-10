@@ -9,6 +9,7 @@ import torch
 from torch.utils.data import IterableDataset
 
 from clapclap.db import DB, Embedding
+from clapclap.update.quickscan import Quickscan
 from clapclap.utils.config import config
 
 import logging
@@ -78,17 +79,16 @@ class FilesystemDatasetAll(IterableDataset):
 
 class FilesystemDataset(IterableDataset):
     def __init__(self, force_process):
-        self.root_dir = pathlib.Path(config.DATA_ROOTDIR)
         self.force_process = force_process
+        self.root_dir = pathlib.Path(config.DATA_ROOTDIR)
+
+        self.quickscan = Quickscan(self.root_dir, config.DATA_QUICKSCAN_STATE, force=self.force_process)
         self.db_checker = DBChecker()
 
     def __iter__(self):
-        for fullpath in pathlib.Path(self.root_dir).rglob("*"):
+        for fullpath in self.quickscan.scan():
             subpath = str(fullpath.relative_to(self.root_dir))
             fullpath = str(fullpath)
-
-            if not os.path.isfile(fullpath):
-                continue
 
             if not self.force_process:
                 if self.db_checker.check(subpath):

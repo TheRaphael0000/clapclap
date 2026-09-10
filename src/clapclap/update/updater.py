@@ -13,7 +13,6 @@ from clapclap.db import DB, Embedding
 from clapclap.update.audio_feature_extractor import AudioFeatureExtractor
 from clapclap.update.dataset import FilesystemDataset, NavidromeDataset
 
-from clapclap.utils.config import config
 from clapclap.utils import Timer
 
 logger = logging.getLogger("UPDATER")

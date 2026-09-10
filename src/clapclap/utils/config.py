@@ -47,6 +47,10 @@ class Configuration:
     @property
     def DATA_ROOTDIR(self) -> str:
         return self.config("DATA_ROOTDIR", default="/music/")
+
+    @property
+    def DATA_QUICKSCAN_STATE(self) -> str:
+        return self.config("DATA_QUICKSCAN_STATE", default=self.ini_file_path.parent / Path("quickscan_state.json"))
     
     # --- NAVIDROME ---    
     @property
