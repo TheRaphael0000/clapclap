@@ -31,6 +31,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     )
     playlist_parser.add_argument("--regex", "-r", default=".*", help="Regex playlists selection")
     playlist_parser.add_argument("--delete", "-d", action="store_true", help="Delete the selected playlists")
+    playlist_parser.add_argument("--stats", "-s", action="store_true", help="Print playlist stats")
     playlist_parser.set_defaults(func=command_playlist)
 
 
@@ -44,5 +45,5 @@ def command_update(args):
 def command_playlist(args):
     logger.debug("command playlist")
     from .playlistsManager import PlaylistsManager
-    playlistsManager = PlaylistsManager(regex=args.regex, delete=args.delete)
+    playlistsManager = PlaylistsManager(regex=args.regex, delete=args.delete, stats=args.stats)
     playlistsManager.run()

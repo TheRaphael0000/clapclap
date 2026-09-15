@@ -1,42 +1,32 @@
-import re
+import json
 import logging
 
 from clapclap.navidrome.navidrome import Navidrome
 logger = logging.getLogger("METADATA")
 
 class PlaylistsManager:
-    def __init__(self, regex, delete):
+    def __init__(self, regex, delete, stats):
         self.navidrome = Navidrome()
         self.regex = regex
         self.delete = delete
-
+        self.stats = stats
 
     def run(self):
-        response = self.navidrome.get_playlists()
+        playlists = self.navidrome.get_playlists_regex(self.regex)
 
-        is_list = not self.regex and not self.delete
-        count = 0
-
-        for playlist in response["playlists"]["playlist"]:
+        for playlist in playlists:
             id, name = playlist["id"], playlist["name"]
 
-            if is_list:
+            if self.delete:
+                self.navidrome.delete_playlist(id=id)
                 print(name)
-                count += 1
+            elif self.stats:
+                stats = self.navidrome.get_playlist_stats(id=id)
+                print(json.dumps(stats))
             else:
-                match = re.match(string=name, pattern=self.regex)
+                print(name)
 
-                if self.delete and match is not None:
-                    self.navidrome.delete_playlist(id=id)
-                    print(name)
-                    count += 1
-                elif self.regex and match is not None:
-                    print(name)
-                    count += 1
-
-        if is_list:
-            print(f"{count} playlist(s)")
-        elif self.delete:
-            print(f"{count} playlist(s) deleted")
-        elif self.regex:
-            print(f"{count} playlist(s) selected")
+        if self.delete:
+            print(f"{len(playlists)} playlist(s) deleted")
+        elif not self.stats:
+            print(f"{len(playlists)} playlist(s) selected")

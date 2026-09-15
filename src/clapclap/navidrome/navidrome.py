@@ -2,6 +2,7 @@ import hashlib
 import os
 import itertools
 import logging
+import statistics
 
 import requests
 from sqlalchemy import select, update, func
@@ -115,7 +116,41 @@ class Navidrome:
 
     def get_playlists(self):
         return self.query_navidrome("getPlaylists")
-    
+
+    def get_playlists_regex(self, regex):
+        response = self.get_playlists()
+        playlists = []
+
+        for playlist in response["playlists"]["playlist"]:
+            name = playlist["name"]
+            match = re.match(string=name, pattern=regex)
+            if match:
+                playlists.append(playlist)
+        return playlists
+
+    def get_playlist(self, id):
+        return self.query_navidrome("getPlaylist", {"id": id})
+
+    def get_playlist_stats(self, id):
+        response = self.get_playlist(id)
+        playlist = response["playlist"]
+        entry = playlist["entry"]
+        songCount = playlist["songCount"]
+
+        playCount = sum([s.get("playCount", 0) for s in entry])
+        avgYear = statistics.mean([s["year"] for s in entry if "year" in s])
+        avgDuration = statistics.mean([s["duration"] for s in entry if "duration" in s])
+        
+        return {
+            "id": playlist["id"],
+            "name": playlist["name"],
+            "songCount": songCount,
+            "playCount": playCount,
+            "avgPlayCount": playCount / songCount,
+            "avgYear": avgYear,
+            "avgDuration": avgDuration,
+        }
+
     def delete_playlist(self, id):
         return self.query_navidrome("deletePlaylist", {"id": id})
 

@@ -32,8 +32,8 @@ class Metadata:
             if self.fingerprint:
                 tag = get_tag(tinytag, "acoustid_fingerprint")
                 if len(tag) <= 0:
-                    print(f"fingerprint missing for {subpath}")
+                    print(f"'{subpath}' - fingerprint missing")
             if self.replaygain:
                 tag = get_tag(tinytag, "replaygain_track_gain")
                 if len(tag) <= 0:
-                    print(f"replaygain missing for {subpath}")
+                    print(f"'{subpath}' - replaygain missing")
