@@ -14,15 +14,22 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     )
     navidrome_subparsers = navidrome_parser.add_subparsers(required=True)
 
-    update_parser = navidrome_subparsers.add_parser(
+    scan_parser = navidrome_subparsers.add_parser(
         "update", 
         help="Update ids using navidrome",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    scan_group = update_parser.add_mutually_exclusive_group()
-    scan_group.add_argument("--quick-scan", "-s", action="store_true", help="Quick-scan before updating")
-    scan_group.add_argument("--full-scan", action="store_true", help="Full-scan before updating")
-    update_parser.set_defaults(func=command_update)
+    scan_parser.set_defaults(func=command_update)
+
+    scan_parser = navidrome_subparsers.add_parser(
+        "scan", 
+        help="Call the navidrome scanner",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    scan_parser.add_argument("--wait", "-w", action="store_true", help="Don't start a scan, just wait for a scan to end, detach will be ignored.")
+    scan_parser.add_argument("--detach", "-d", action="store_true", help="Don't wait for the scan to end, just send the command")
+    scan_parser.add_argument("--full-scan", "-f", action="store_true", help="Full-scan, quick scan by default")
+    scan_parser.set_defaults(func=command_scan)
 
     playlist_parser = navidrome_subparsers.add_parser(
         "playlist", 
@@ -36,14 +43,24 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 
 def command_update(args):
-    logger.debug("command navidrome")
+    logger.debug("command navidrome update")
     from .navidrome import Navidrome
     navidrome = Navidrome()
-    navidrome.update_ids(args.quick_scan, args.full_scan)
+    navidrome.update_ids()
+
+
+def command_scan(args):
+    logger.debug("command navidrome scan")
+    from .navidrome import Navidrome
+    navidrome = Navidrome()
+    if not args.wait:
+        navidrome.start_scan(args.full_scan)
+    if not args.detach or args.wait:
+        navidrome.scan_progress()
 
 
 def command_playlist(args):
-    logger.debug("command playlist")
+    logger.debug("command navidrome playlist")
     from .playlistsManager import PlaylistsManager
     playlistsManager = PlaylistsManager(regex=args.regex, delete=args.delete, stats=args.stats)
     playlistsManager.run()

@@ -168,10 +168,7 @@ class Navidrome:
         return self.query_navidrome("updatePlaylist", {"playlistId": playlistId, "songIdToAdd": songIdToAdd})
 
 
-    def update_ids(self, quick_scan=False, full_scan=False):
-        if quick_scan or full_scan:
-            self.start_scan(full_scan)
-
+    def update_ids(self):
         logger.info("Updating ids")
         lookup_data = []
 
@@ -202,7 +199,6 @@ class Navidrome:
             args |= { "fullScan": True}
         response = self.query_navidrome("startScan", args)
         logger.debug(f"startScan\n{response}")
-        self.scan_progress()
 
     def scan_progress(self):
         # get the number of albums just for UX, kinda bad but i like it better this way
