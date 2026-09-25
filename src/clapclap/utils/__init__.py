@@ -1,7 +1,5 @@
 import timeit
-import logging
-
-logger = logging.getLogger("UTILS")
+from clapclap.utils.log import logger
 
 class Timer:
     def __init__(self, label = "", info = False):

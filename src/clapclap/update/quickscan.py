@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
-import logging
 
 from clapclap.utils import Timer
-
-logger = logging.getLogger("QUICKSCAN")
+from clapclap.utils.log import logger
 
 
 class Quickscan:

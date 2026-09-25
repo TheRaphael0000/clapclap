@@ -1,13 +1,9 @@
-import logging
-
-from sqlalchemy import select, func
+from sqlalchemy import select
 from pgvector.sqlalchemy import avg
-import numpy as np
 
 from clapclap.db import DB, Embedding
 from clapclap.query.query import Query
-
-logger = logging.getLogger("QUERY")
+from clapclap.utils.log import logger
 
 
 class SimilarityQuery(Query):

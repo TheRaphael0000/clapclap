@@ -1,14 +1,10 @@
 from __future__ import annotations
-import logging
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
 from typing import get_args
 
 from clapclap.clustering.clustering import Clustering
 from clapclap.utils.types import GenresList
-
-
-logger = logging.getLogger("CLI")
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):

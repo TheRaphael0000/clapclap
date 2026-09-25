@@ -1,20 +1,14 @@
-from threading import Thread
 import asyncio
 from sqlalchemy import select
 
 from clapclap.db import DB, Embedding
-from clapclap.query.similarity_query import SimilarityQuery
 from clapclap.serve.dht_node import DHTNode
 import io
 import numpy as np
 import umsgpack
 
-import logging
-
 from clapclap.utils.consts import CLAP_EMBEDDING_SIZE, CLAP_MODEL
-
-logger = logging.getLogger("DHTDB")
-
+from clapclap.utils.log import logger
 
 
 class DHTDB(DHTNode):

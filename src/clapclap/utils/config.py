@@ -1,8 +1,6 @@
 from pathlib import Path
 from decouple import Config, RepositoryIni
-import logging
-
-logger = logging.getLogger("CONFIG")
+from clapclap.utils.log import logger
 
 class Configuration:
     def __init__(self):

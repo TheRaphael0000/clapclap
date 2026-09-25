@@ -4,10 +4,7 @@ from .DB import DB
 from .Base import Base
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
-import logging
-
-
-logger = logging.getLogger("CLI")
+from clapclap.utils.log import logger
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     subparser = subparsers.add_parser(

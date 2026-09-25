@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 from sqlalchemy import select
 
@@ -6,8 +5,7 @@ from clapclap.clustering.smartnaming import SmartNaming
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
 from clapclap.utils.types import GenresList
-
-logger = logging.getLogger("CLUSTERING")
+from clapclap.utils.log import logger
 
 class ClusteringMethod:
     def __init__(self):

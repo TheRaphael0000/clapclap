@@ -1,9 +1,6 @@
-import logging
-
 import torch
-import transformers
 from transformers import AutoTokenizer, ClapTextModelWithProjection
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from clapclap.utils.musicbrainz_genres import musicbrainz_genres
 from clapclap.utils.everynoise_genres import everynoise_genres
 from clapclap.utils.macro_genres import macro_genres
@@ -11,17 +8,21 @@ from clapclap.utils.types import GenresList
 
 from clapclap.utils import Timer
 from clapclap.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
-
-transformers.logging.set_verbosity_error()
-logger = logging.getLogger("UPDATER")
+from clapclap.utils.log import logger
 
 
 class TextFeatureExtractor:
     def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         logger.debug(f"Embedding Projection Device: {self.device}")
-        self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR)
-        self.model = ClapTextModelWithProjection.from_pretrained(CLAP_MODEL).to(self.device)
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
+            self.model = ClapTextModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True)
+        except Exception as e:
+            self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR)
+            self.model = ClapTextModelWithProjection.from_pretrained(CLAP_MODEL)
+
+        self.model = self.model.to(self.device)
         self.model.eval()
 
     def clap(self, texts):

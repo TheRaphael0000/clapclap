@@ -2,9 +2,7 @@ from __future__ import annotations
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
 
-import logging
-
-logger = logging.getLogger("NAVIDROME")
+from clapclap.utils.log import logger
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     navidrome_parser = subparsers.add_parser(

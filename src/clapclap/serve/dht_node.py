@@ -1,11 +1,9 @@
-import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import opendht.aio as dht
 
 from clapclap.utils.config import config
-
-logger = logging.getLogger("DHT")
+from clapclap.utils.log import logger
 
 
 class DHTNode:

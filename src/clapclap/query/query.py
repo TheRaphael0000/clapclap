@@ -1,12 +1,9 @@
-import logging
-
 from sqlalchemy import select, func
 import numpy as np
 
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
-
-logger = logging.getLogger("QUERY")
+from clapclap.utils.log import logger
 
 class Query:
     def __init__(self, temperature, limit):

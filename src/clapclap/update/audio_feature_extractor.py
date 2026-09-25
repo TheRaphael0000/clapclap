@@ -2,21 +2,16 @@ import torch
 import subprocess
 import json
 import numpy as np
-import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import io
 import base64
 
 from tinytag import TinyTag
-import transformers
 from transformers import ClapAudioModelWithProjection, ClapProcessor
 
 from clapclap.utils import Timer
 from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE, RESAMPLE_MAX_DURATION
-
-transformers.logging.set_verbosity_error()
-# logging.getLogger("httpx").setLevel(logging.WARNING)
-logger = logging.getLogger("UPDATER")
+from clapclap.utils.log import logger
 
 
 def threadpool_pipeline(func, batch, subpaths, max_workers):
@@ -108,9 +103,16 @@ class AudioFeatureExtractor:
         logger.debug(f"Embedding Projection Device: {self.device}")
 
         logger.debug("loading clap model...")
-        self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
-        self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL).to(self.device)
+        try:
+            self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
+            self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True)
+        except Exception as e:
+            print(e)
+            self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
+            self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL)
         logger.debug("clap model loaded")
+
+        self.model = self.model.to(self.device)
         self.model.eval()
         
     def process_batch(self, batch, subpaths):

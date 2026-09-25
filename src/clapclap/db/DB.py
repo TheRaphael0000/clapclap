@@ -3,10 +3,9 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from clapclap.utils.config import config
-from .Base import Base
+from clapclap.utils.log import logger
 
-import logging
-logger = logging.getLogger("DB")
+from .Base import Base
 
 
 class DB():

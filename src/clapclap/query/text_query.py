@@ -1,10 +1,7 @@
-import logging
-
 from clapclap.query.query import Query
 from clapclap.update.text_feature_extractor import TextFeatureExtractor
 
-
-logger = logging.getLogger("QUERY")
+from clapclap.utils.log import logger
 
 class TextQuery(Query):
     def __init__(self, temperature, limit, text):

@@ -5,17 +5,13 @@ import pathlib
 from sqlalchemy import exists, select
 import filetype
 
-import torch
 from torch.utils.data import IterableDataset
 
 from clapclap.db import DB, Embedding
 from clapclap.update.quickscan import Quickscan
 from clapclap.utils.config import config
-
-import logging
-
 from clapclap.navidrome.navidrome import Navidrome
-logger = logging.getLogger("UPDATER")
+from clapclap.utils.log import logger
 
 class DBChecker:
     def __init__(self):

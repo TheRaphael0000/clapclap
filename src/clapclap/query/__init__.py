@@ -1,11 +1,9 @@
 from __future__ import annotations
-import logging
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
 
 from .similarity_query import SimilarityQuery
-
-logger = logging.getLogger("CLI")
+from clapclap.utils.log import logger
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
@@ -52,11 +50,13 @@ def process_query(query, args):
         query.save_to_playlist(args.save)
 
 def similarity_command(args):
+    logger.debug("command query simlilarity")
     query = SimilarityQuery(limit=args.limit, temperature=args.temperature, path=args.path, songId=args.songId, albumId=args.albumId, artistId=args.artistId)
     process_query(query, args)
 
 
 def query_text_command(args):
+    logger.debug("command query text")
     from .text_query import TextQuery
     query = TextQuery(limit=args.limit, temperature=args.temperature, text=args.text)
     process_query(query, args)

@@ -1,12 +1,8 @@
-
-import logging
 import numpy as np
 
 from scipy.spatial.distance import cdist
 
-import logging
-
-logger = logging.getLogger("SMART_NAMING")
+from clapclap.utils.log import logger
 
 class SmartNaming:
     def __init__(self, size, sep, use_macro_genre, genres_list):

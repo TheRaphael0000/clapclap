@@ -1,7 +1,6 @@
 import hashlib
 import os
 import itertools
-import logging
 import statistics
 
 import requests
@@ -11,7 +10,7 @@ from clapclap.db import DB, Embedding
 
 
 from clapclap.utils.config import config
-logger = logging.getLogger("NAVIDROME")
+from clapclap.utils.log import logger
 
 from tqdm import tqdm
 import re

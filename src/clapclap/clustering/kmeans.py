@@ -1,11 +1,9 @@
-import logging
-
 from sklearn.cluster import KMeans
 import numpy as np
 
 from clapclap.clustering.clustering import ClusteringMethod
 
-logger = logging.getLogger("KMEANS")
+from clapclap.utils.log import logger
 
 class KMeansClustering(ClusteringMethod):
     def __init__(self, k):

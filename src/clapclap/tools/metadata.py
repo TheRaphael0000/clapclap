@@ -1,9 +1,7 @@
 from tinytag import TinyTag
 
 from clapclap.update.dataset import FilesystemDatasetAll
-
-import logging
-logger = logging.getLogger("METADATA")
+from clapclap.utils.log import logger
 
 def get_tag(tinytag, tag):
     results = []

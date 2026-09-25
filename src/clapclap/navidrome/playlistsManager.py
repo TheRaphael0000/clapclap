@@ -1,8 +1,7 @@
 import json
-import logging
 
 from clapclap.navidrome.navidrome import Navidrome
-logger = logging.getLogger("METADATA")
+from clapclap.utils.log import logger
 
 class PlaylistsManager:
     def __init__(self, regex, delete, stats):

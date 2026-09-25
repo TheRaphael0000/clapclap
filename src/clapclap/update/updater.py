@@ -1,5 +1,3 @@
-import os
-import pathlib
 import logging
 import threading
 import queue
@@ -12,10 +10,8 @@ from torch.utils.data import DataLoader
 from clapclap.db import DB, Embedding
 from clapclap.update.audio_feature_extractor import AudioFeatureExtractor
 from clapclap.update.dataset import FilesystemDataset, NavidromeDataset
-
 from clapclap.utils import Timer
-
-logger = logging.getLogger("UPDATER")
+from clapclap.utils.log import logger
 
 
 class Updater:
@@ -89,7 +85,7 @@ class Updater:
 
 
     def start(self):
-        logger.info(f"Stating database update with: {type(self.dataset)}")
+        logger.info(f"Stating database update with: {type(self.dataset).__name__}")
 
         saver = threading.Thread(target=self.saver)
         saver.start()
