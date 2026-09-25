@@ -54,6 +54,7 @@ class Query:
             else:
                 query_limit = self.limit
 
+            logger.debug(f"select close embedding in the db, query limit: {query_limit}")
             stmt = select(Embedding, proximity_expr).order_by(self.order_by_factor * proximity_expr).limit(query_limit)
             # stmt = select(Embedding, proximity_expr).filter(proximity_expr > 0).order_by(self.order_by_factor * proximity_expr).limit(query_limit)
             results = session.execute(stmt).all()
