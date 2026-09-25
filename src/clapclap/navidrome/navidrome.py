@@ -82,10 +82,19 @@ class Navidrome:
                 yield album
             offset += size
 
-    def album_iterator(self, size=500):
+    def albums_iterator(self, size=500, limit=-1):
+        count = 0
         for album in self.album_list_iterator(size):
             album = self.query_navidrome("getAlbum", {"id": album["id"]})
             yield album["album"]
+            count += 1
+            if limit > 0 and count >= limit:
+                return
+
+    def albums_to_songs_iterator(self, albums_iterator):
+        for album in albums_iterator:
+            for song in album["song"]:
+                yield song
 
     def album_count(self):
         # there might be a better way :(
@@ -98,17 +107,17 @@ class Navidrome:
             total += album["songCount"]
         return total
 
-    def songs_iterator(self, size=2000):
+    def songs_iterator(self, songs_per_page=2000):
         offset = 0
         while True:
-            results = self.query_navidrome("search3", {"query": "", "artistCount": "0", "albumCount": "0", "songCount": size, "songOffset": offset})
+            results = self.query_navidrome("search3", {"query": "", "artistCount": "0", "albumCount": "0", "songCount": songs_per_page, "songOffset": offset})
             try:
                 songs = results["searchResult3"]["song"]
                 for song in songs:
                     yield song
             except:
                 return None
-            offset += size
+            offset += songs_per_page
 
     def download(self, songId):
         return self.query_navidrome("download", {"id": songId}, content=True)
@@ -167,14 +176,23 @@ class Navidrome:
         return self.query_navidrome("updatePlaylist", {"playlistId": playlistId, "songIdToAdd": songIdToAdd})
 
 
-    def update_ids(self):
+    def update_ids(self, limit):
         logger.info("Updating ids")
         lookup_data = []
 
         libPath = config.NAVIDROME_ROOTDIR
         
-        # get the number of songs just for UX, kinda bad but i like it better this way
-        for song in tqdm(self.songs_iterator(), desc="Loading navidrome ids", total=self.song_count()):
+        if limit:
+            albums_iterator = self.albums_iterator(limit=limit)
+            songs_iterator = self.albums_to_songs_iterator(albums_iterator)
+            total = None
+        else:
+            songs_iterator = self.songs_iterator()
+            # get the number of songs just for UX, kinda bad but i like it better this way
+            total = self.song_count()
+
+        for song in tqdm(songs_iterator, desc="Loading navidrome ids", total=total):
+            logger.debug(song)
             relative_path = re.sub(rf"^{libPath}(.*)$", r"\1", song["path"])
             lookup_data.append({"path": relative_path, "songId": song["id"], "albumId": song["albumId"], "artistId": song["artistId"]})
 

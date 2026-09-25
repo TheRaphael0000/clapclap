@@ -12,12 +12,13 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     )
     navidrome_subparsers = navidrome_parser.add_subparsers(required=True)
 
-    scan_parser = navidrome_subparsers.add_parser(
+    update_parser = navidrome_subparsers.add_parser(
         "update", 
         help="Update ids using navidrome",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    scan_parser.set_defaults(func=command_update)
+    update_parser.add_argument("--limit", "-l", type=int, default=-1, help="Only fetch the N last albums, intead of fetching the whole database")
+    update_parser.set_defaults(func=command_update)
 
     scan_parser = navidrome_subparsers.add_parser(
         "scan", 
@@ -44,7 +45,7 @@ def command_update(args):
     logger.debug("command navidrome update")
     from .navidrome import Navidrome
     navidrome = Navidrome()
-    navidrome.update_ids()
+    navidrome.update_ids(limit=args.limit)
 
 
 def command_scan(args):
