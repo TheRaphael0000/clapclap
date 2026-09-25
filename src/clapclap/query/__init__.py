@@ -12,7 +12,9 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
         help="DB Query operations",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    query_subparser.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
+    group = query_subparser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
+    group.add_argument("--quiet", "-q", action="store_true", help="Don't print the playlist")
     query_subparser.add_argument("--limit", "-l", type=int, default=20, help="Number of results")
     query_subparser.add_argument("--temperature", "-t", type=float, default=0, help="Standard deviation of the noise to add to the centroid [0,1]")
     query_subparser.add_argument("--save", "-s", action="store_true", help="Save to navidrome playlist")
@@ -44,10 +46,11 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 
 def process_query(query, args, name):
-    if args.json:
-        print(query.get_json())
-    else:
-        print(query.get_text())
+    if not args.quiet:
+        if args.json:
+            print(query.get_json())
+        else:
+            print(query.get_text())
     
     save = args.save
     name = name or "unnamed"
