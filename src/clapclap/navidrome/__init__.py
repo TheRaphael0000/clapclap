@@ -41,6 +41,14 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     playlist_parser.set_defaults(func=command_playlist)
 
 
+    playlists_fuse_parser = navidrome_subparsers.add_parser(
+        "playlists-fuse", 
+        help="Fuse playlists with same name",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    playlists_fuse_parser.set_defaults(func=command_playlists_fuse)
+
+
 def command_update(args):
     logger.debug("command navidrome update")
     from .navidrome import Navidrome
@@ -63,3 +71,9 @@ def command_playlist(args):
     from .playlistsManager import PlaylistsManager
     playlistsManager = PlaylistsManager(regex=args.regex, delete=args.delete, stats=args.stats)
     playlistsManager.run()
+
+def command_playlists_fuse(args):
+    logger.debug("command navidrome playlists-fuse")
+    from .navidrome import Navidrome
+    navidrome = Navidrome()
+    navidrome.playlists_fuse()

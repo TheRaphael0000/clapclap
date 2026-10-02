@@ -2,6 +2,7 @@ import hashlib
 import os
 import itertools
 import statistics
+import collections
 
 import requests
 from sqlalchemy import select, update, func
@@ -142,6 +143,26 @@ class Navidrome:
     def get_genres(self):
         return self.query_navidrome("getGenres")
 
+    def playlists_fuse(self):
+        response = self.get_playlists()
+        playlists_groupped = collections.defaultdict(list)
+        for playlist in response["playlists"]["playlist"]:
+            playlists_groupped[playlist["name"]].append(playlist)
+        playlists_to_fuse = {k:p for k, p in playlists_groupped.items() if len(p) > 1}
+
+        for name, playlists in playlists_to_fuse.items():
+            logger.info(f"'{name}' ({len(playlists)} playlists):")
+            host_playlist = max(playlists, key=lambda p: p["songCount"])
+
+            for p in playlists:
+                if p == host_playlist:
+                    continue
+                logger.info(f"- adding '{p["name"]}' to '{host_playlist["name"]}'")
+                playlistResponse = self.get_playlist(p["id"])
+                songIds = [s["id"] for s in playlistResponse["playlist"]["entry"]]
+                self.add_songs_to_playlist(host_playlist["id"], songIds)
+                self.delete_playlist(p["id"])
+
     def get_playlist_stats(self, id):
         response = self.get_playlist(id)
         playlist = response["playlist"]
@@ -164,6 +185,11 @@ class Navidrome:
 
     def delete_playlist(self, id):
         return self.query_navidrome("deletePlaylist", {"id": id})
+
+    def add_songs_to_playlist(self, playlistId, songIds):
+        songIds_batched = itertools.batched(iterable=songIds, n=200)
+        for batch in songIds_batched:
+            self.update_playlist(playlistId=playlistId, songIdToAdd=batch)
 
     def create_playlist(self, name, songIds):
         songIds_batched = itertools.batched(iterable=songIds, n=200)
