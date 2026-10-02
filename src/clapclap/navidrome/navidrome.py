@@ -138,6 +138,9 @@ class Navidrome:
 
     def get_playlist(self, id):
         return self.query_navidrome("getPlaylist", {"id": id})
+    
+    def get_genres(self):
+        return self.query_navidrome("getGenres")
 
     def get_playlist_stats(self, id):
         response = self.get_playlist(id)

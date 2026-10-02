@@ -63,6 +63,12 @@ class GenreDataset(Dataset):
             genres |= set(everynoise_genres[0:1000])
         if genres_list == "musicbrainz" or genres_list == "all":
             genres |= set(musicbrainz_genres)
+        if genres_list == "navidrome" or genres_list == "all":
+            from clapclap.navidrome.navidrome import Navidrome
+            navidrome = Navidrome()
+            navidrome_genres = navidrome.get_genres()
+            genres_ = [g["value"] for g in navidrome_genres["genres"]["genre"] if g["songCount"] > 10]
+            genres |= set(genres_)
         self.genres = list(genres)
 
     def __len__(self):
