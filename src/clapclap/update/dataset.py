@@ -26,7 +26,7 @@ class DBChecker:
 
 class NavidromeDataset(IterableDataset):
     def __init__(self, force_process):
-        self.root_dir = pathlib.Path(config.NAVIDROME_ROOTDIR)
+        self.root_dir = pathlib.Path(config.NAVIDROME_ROOT_DIR)
         self.force_process = force_process
         self.db_checker = DBChecker()
 
@@ -55,7 +55,7 @@ class NavidromeDataset(IterableDataset):
 
 class FilesystemDatasetAll(IterableDataset):
     def __init__(self):
-        self.root_dir = pathlib.Path(config.DATA_ROOTDIR)
+        self.root_dir = pathlib.Path(config.DATA_ROOT_DIR)
 
     def __iter__(self):
         for fullpath in pathlib.Path(self.root_dir).rglob("*"):
@@ -76,7 +76,7 @@ class FilesystemDatasetAll(IterableDataset):
 class FilesystemDataset(IterableDataset):
     def __init__(self, force_process):
         self.force_process = force_process
-        self.root_dir = pathlib.Path(config.DATA_ROOTDIR)
+        self.root_dir = pathlib.Path(config.DATA_ROOT_DIR)
 
         self.quickscan = Quickscan(self.root_dir, config.DATA_QUICKSCAN_STATE, force=self.force_process)
         self.db_checker = DBChecker()

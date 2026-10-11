@@ -35,7 +35,7 @@ class Configuration:
 
     @property
     def POSTGRES_DB(self) -> str:
-        return self.config("POSTGRES_DB", default="db")
+        return self.config("POSTGRES_DB", default="clapclap")
 
     @property
     def POSTGRES_HOST(self) -> str:
@@ -43,8 +43,8 @@ class Configuration:
 
     # --- DATA ---
     @property
-    def DATA_ROOTDIR(self) -> str:
-        return self.config("DATA_ROOTDIR", default="/music/")
+    def DATA_ROOT_DIR(self) -> str:
+        return self.config("DATA_ROOT_DIR", default="/music/")
 
     @property
     def DATA_QUICKSCAN_STATE(self) -> str:
@@ -62,18 +62,14 @@ class Configuration:
     @property
     def NAVIDROME_PASSWORD(self) -> str:
         return self.config("NAVIDROME_PASSWORD", default="password")
-
-    @property
-    def NAVIDROME_DB(self) -> str:
-        return self.config("NAVIDROME_DB", default="/navidrome.db")
     
     @property
-    def NAVIDROME_ROOTDIR(self) -> str:
-        return self.config("NAVIDROME_ROOTDIR", default="/music/")
+    def NAVIDROME_ROOT_DIR(self) -> str:
+        return self.config("NAVIDROME_ROOT_DIR", default="/music/")
 
     @property
-    def NAVIDROME_PLAYLISTPREFIX(self) -> str:
-        return self.config("NAVIDROME_PLAYLISTPREFIX", default="")
+    def NAVIDROME_PLAYLIST_PREFIX(self) -> str:
+        return self.config("NAVIDROME_PLAYLIST_PREFIX", default="")
     
     def default_config_path(self):
         filename = "config.ini"
@@ -83,7 +79,8 @@ class Configuration:
             config_dir.mkdir(parents=True, exist_ok=True)
             return str(config_dir / filename)
         except:
-            logger.info("User directory not available")
-            return f"/etc/clapclap/{filename}"
+            default_config_path = "/etc/clapclap/{filename}"
+            logger.info(f"User directory not available, defaulting to '{default_config_path}'")
+            return default_config_path
 
 config = Configuration()

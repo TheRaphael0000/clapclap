@@ -194,7 +194,7 @@ class Navidrome:
     def create_playlist(self, name, songIds):
         songIds_batched = itertools.batched(iterable=songIds, n=200)
         first_batch = next(songIds_batched)
-        playlist = self.query_navidrome("createPlaylist", {"name": f"{config.NAVIDROME_PLAYLISTPREFIX}{name}", "songId": first_batch})
+        playlist = self.query_navidrome("createPlaylist", {"name": f"{config.NAVIDROME_PLAYLIST_PREFIX}{name}", "songId": first_batch})
 
         playlistId = playlist["playlist"]["id"]
 
@@ -209,7 +209,7 @@ class Navidrome:
         logger.info("Updating ids")
         lookup_data = []
 
-        libPath = config.NAVIDROME_ROOTDIR
+        libPath = config.NAVIDROME_ROOT_DIR
         
         if limit:
             albums_iterator = self.albums_iterator(limit=limit)

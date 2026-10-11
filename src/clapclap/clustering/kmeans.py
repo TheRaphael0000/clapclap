@@ -13,6 +13,7 @@ class KMeansClustering(ClusteringMethod):
 
     def get_cluster_labels(self, embeddings):
         kmeans = KMeans(n_clusters=self.k)
+        embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
         cluster_labels = kmeans.fit_predict(embeddings)
         logger.info(np.histogram(cluster_labels, bins=self.k-1)[0])
         return cluster_labels
