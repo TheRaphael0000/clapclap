@@ -1,0 +1,94 @@
+<mxfile host="Electron" modified="2026-10-11T11:12:35.698Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="o9ySN9Q7Kg-iukY0rxj6" version="21.6.8" type="device">
+  <diagram name="Page-1" id="Cch9915GRm6cg5avb2zB">
+    <mxGraphModel dx="1418" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-9" value="Server with Docker" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="10" y="30" width="460" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-23" value="pgvector docker image" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="350" y="220" width="90" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-10" value="PC with good CPU/GPU" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="520" y="170" width="180" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-21" value="navidrome docker image" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-22" value="clapclap docker server image" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="30" y="250" width="218" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-2" value="Navidrome" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="38" y="95" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-12" value="query vector DB" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;startFill=0;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-3" target="pbR1CPnsHKIT3WuFJEun-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-3" value="clapclap&lt;br&gt;&lt;i&gt;clapclap serve&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="38" y="281" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-8" value="clapclap" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="536" y="206" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-11" value="clapclap db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="366" y="266" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-13" value="audio&lt;br&gt;files" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="366" y="80" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-14" value="read" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;startFill=0;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-2" target="pbR1CPnsHKIT3WuFJEun-13">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="316" y="255" as="sourcePoint" />
+            <mxPoint x="396" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-15" value="query similar songs" style="endArrow=none;startArrow=classic;html=1;rounded=0;startFill=1;endFill=0;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-3" target="pbR1CPnsHKIT3WuFJEun-16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="176" y="240" as="sourcePoint" />
+            <mxPoint x="226" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-16" value="clapclap_navidrome plugin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="78" y="145" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-18" value="populate database" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-8" target="pbR1CPnsHKIT3WuFJEun-11">
+          <mxGeometry x="0.312" width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="936" y="470" as="sourcePoint" />
+            <mxPoint x="986" y="420" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="780" y="231" />
+              <mxPoint x="780" y="306" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-19" value="optional read&lt;br&gt;(but recommended for performances)" style="endArrow=classic;html=1;rounded=0;dashed=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-8" target="pbR1CPnsHKIT3WuFJEun-13">
+          <mxGeometry x="0.2451" width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="956" y="400" as="sourcePoint" />
+            <mxPoint x="1006" y="350" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="731" y="120" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-20" value="create playlists&lt;br&gt;read navidrome ids&lt;br&gt;(read audio files, if no direct access)" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pbR1CPnsHKIT3WuFJEun-8" target="pbR1CPnsHKIT3WuFJEun-2">
+          <mxGeometry x="-0.0977" width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="696" y="241" as="sourcePoint" />
+            <mxPoint x="427" y="316" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="760" y="231" />
+              <mxPoint x="760" y="20" />
+              <mxPoint x="138" y="20" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pbR1CPnsHKIT3WuFJEun-24" value="samba/nfs share" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="351" y="40" width="90" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

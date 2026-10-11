@@ -12,7 +12,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
         help="DB Query operations",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    group = query_subparser.add_mutually_exclusive_group(required=True)
+    group = query_subparser.add_mutually_exclusive_group(required=False)
     group.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
     group.add_argument("--quiet", "-q", action="store_true", help="Don't print the playlist")
     query_subparser.add_argument("--limit", "-l", type=int, default=20, help="Number of results")

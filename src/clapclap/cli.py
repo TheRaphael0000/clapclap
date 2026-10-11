@@ -24,4 +24,4 @@ def main():
     config.init(args.config)
 
     signal.signal(signal.SIGINT, exit_all)
-    args.func(args)
+    args.func(args) 

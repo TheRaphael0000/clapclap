@@ -10,7 +10,7 @@ from clapclap.utils.types import GenresList
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     clustering_subparser = subparsers.add_parser(
         "clustering", 
-        help="DB Query operations",
+        help="Clustering operations / Playlists creations",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     # clustering_subparser.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
