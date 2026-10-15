@@ -40,19 +40,19 @@ class Navidrome:
             "f": "json",
         }
 
-
     def query_navidrome(self, endpoint: str, extra_params: dict = None, content=False) -> dict:
         """Sends a query request to a specific Navidrome API endpoint."""
         url = f"{config.NAVIDROME_URL.rstrip('/')}/rest/{endpoint}"
 
-        params = self.get_auth_params(config.NAVIDROME_USER, config.NAVIDROME_PASSWORD)
+        params = self.get_auth_params(
+            config.NAVIDROME_USER, config.NAVIDROME_PASSWORD)
         if extra_params:
             params.update(extra_params)
 
         try:
             logger.debug(url)
             response = requests.get(url, params=params)
-            
+
             response.raise_for_status()
 
             if content:
@@ -65,7 +65,8 @@ class Navidrome:
                 return subsonic_response
             else:
                 error = subsonic_response.get("error", {})
-                logger.error(f"API Error ({error.get('code')}): {error.get('message')}")
+                logger.error(
+                    f"API Error ({error.get('code')}): {error.get('message')}")
                 return None
 
         except requests.exceptions.RequestException as e:
@@ -75,7 +76,8 @@ class Navidrome:
     def album_list_iterator(self, size=500):
         offset = 0
         while True:
-            albums = self.query_navidrome("getAlbumList", {"type": "newest", "size": size, "offset": offset})
+            albums = self.query_navidrome(
+                "getAlbumList", {"type": "newest", "size": size, "offset": offset})
             albumList = albums["albumList"]
             if "album" not in albumList:
                 return
@@ -111,7 +113,8 @@ class Navidrome:
     def songs_iterator(self, songs_per_page=2000):
         offset = 0
         while True:
-            results = self.query_navidrome("search3", {"query": "", "artistCount": "0", "albumCount": "0", "songCount": songs_per_page, "songOffset": offset})
+            results = self.query_navidrome("search3", {
+                                           "query": "", "artistCount": "0", "albumCount": "0", "songCount": songs_per_page, "songOffset": offset})
             try:
                 songs = results["searchResult3"]["song"]
                 for song in songs:
@@ -139,7 +142,7 @@ class Navidrome:
 
     def get_playlist(self, id):
         return self.query_navidrome("getPlaylist", {"id": id})
-    
+
     def get_genres(self):
         return self.query_navidrome("getGenres")
 
@@ -148,7 +151,8 @@ class Navidrome:
         playlists_groupped = collections.defaultdict(list)
         for playlist in response["playlists"]["playlist"]:
             playlists_groupped[playlist["name"]].append(playlist)
-        playlists_to_fuse = {k:p for k, p in playlists_groupped.items() if len(p) > 1}
+        playlists_to_fuse = {k: p for k,
+                             p in playlists_groupped.items() if len(p) > 1}
 
         for name, playlists in playlists_to_fuse.items():
             logger.info(f"'{name}' ({len(playlists)} playlists):")
@@ -157,9 +161,11 @@ class Navidrome:
             for p in playlists:
                 if p == host_playlist:
                     continue
-                logger.info(f"- adding '{p["name"]}' to '{host_playlist["name"]}'")
+                logger.info(
+                    f"- adding '{p["name"]}' to '{host_playlist["name"]}'")
                 playlistResponse = self.get_playlist(p["id"])
-                songIds = [s["id"] for s in playlistResponse["playlist"]["entry"]]
+                songIds = [s["id"]
+                           for s in playlistResponse["playlist"]["entry"]]
                 self.add_songs_to_playlist(host_playlist["id"], songIds)
                 self.delete_playlist(p["id"])
 
@@ -171,8 +177,9 @@ class Navidrome:
 
         playCount = sum([s.get("playCount", 0) for s in entry])
         avgYear = statistics.mean([s["year"] for s in entry if "year" in s])
-        avgDuration = statistics.mean([s["duration"] for s in entry if "duration" in s])
-        
+        avgDuration = statistics.mean(
+            [s["duration"] for s in entry if "duration" in s])
+
         return {
             "id": playlist["id"],
             "name": playlist["name"],
@@ -194,7 +201,8 @@ class Navidrome:
     def create_playlist(self, name, songIds):
         songIds_batched = itertools.batched(iterable=songIds, n=200)
         first_batch = next(songIds_batched)
-        playlist = self.query_navidrome("createPlaylist", {"name": f"{config.NAVIDROME_PLAYLIST_PREFIX}{name}", "songId": first_batch})
+        playlist = self.query_navidrome("createPlaylist", {
+                                        "name": f"{config.NAVIDROME_PLAYLIST_PREFIX}{name}", "songId": first_batch})
 
         playlistId = playlist["playlist"]["id"]
 
@@ -204,13 +212,12 @@ class Navidrome:
     def update_playlist(self, playlistId, songIdToAdd):
         return self.query_navidrome("updatePlaylist", {"playlistId": playlistId, "songIdToAdd": songIdToAdd})
 
-
     def update_ids(self, limit):
         logger.info("Updating ids")
         lookup_data = []
 
         libPath = config.NAVIDROME_ROOT_DIR
-        
+
         if limit:
             albums_iterator = self.albums_iterator(limit=limit)
             songs_iterator = self.albums_to_songs_iterator(albums_iterator)
@@ -223,7 +230,8 @@ class Navidrome:
         for song in tqdm(songs_iterator, desc="Loading navidrome ids", total=total):
             logger.debug(song)
             relative_path = re.sub(rf"^{libPath}(.*)$", r"\1", song["path"])
-            lookup_data.append({"path": relative_path, "songId": song["id"], "albumId": song["albumId"], "artistId": song["artistId"]})
+            lookup_data.append(
+                {"path": relative_path, "songId": song["id"], "albumId": song["albumId"], "artistId": song["artistId"]})
 
         db = DB()
         with db as session:
@@ -235,14 +243,16 @@ class Navidrome:
             session.execute(update(Embedding), lookup_data)
             session.commit()
 
-            unmateched_count = session.scalar(select(func.count()).select_from(Embedding).where(Embedding.songId == None))
-            total_count = session.scalar(select(func.count()).select_from(Embedding))
+            unmateched_count = session.scalar(select(func.count()).select_from(
+                Embedding).where(Embedding.songId == None))
+            total_count = session.scalar(
+                select(func.count()).select_from(Embedding))
             logger.info(f"Unmatched: {unmateched_count}/{total_count}")
 
     def start_scan(self, full_scan=False):
         args = {}
         if full_scan:
-            args |= { "fullScan": True}
+            args |= {"fullScan": True}
         response = self.query_navidrome("startScan", args)
         logger.debug(f"startScan\n{response}")
 
@@ -265,5 +275,5 @@ class Navidrome:
 
                 if status["scanning"] != True:
                     return
-                
+
                 time.sleep(0.95)

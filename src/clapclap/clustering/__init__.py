@@ -9,33 +9,44 @@ from clapclap.utils.types import GenresList
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     clustering_subparser = subparsers.add_parser(
-        "clustering", 
+        "clustering",
         help="Clustering operations / Playlists creations",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     # clustering_subparser.add_argument("--json", "-j", action="store_true", help="Return a json formatted string")
-    clustering_subparser.add_argument("--limit", "-l", type=int, default=100, help="Number of results per clusters")
-    clustering_subparser.add_argument("--save", "-s", action="store_true", help="Save to navidrome playlist")
-    clustering_subparser.add_argument("--no-smart-naming", action="store_true", help="Disable playlist smart-naming")
-    clustering_subparser.add_argument("--smart-naming-no-macro-genre", action="store_true", help="Disable macro genre names")
-    clustering_subparser.add_argument("--smart-naming-size", type=int, default=2, help="Number of genres for the smart-naming")
-    clustering_subparser.add_argument("--smart-naming-sep", type=str, default=",", help="Smart naming separator")
-    clustering_subparser.add_argument("--smart-naming-list", type=str, choices=get_args(GenresList), default="musicbrainz", help="Genres List")
-    clustering_subparser.add_argument("--prefix", "-p", default="cc/", type=str, help="Playlist name prefix")
+    clustering_subparser.add_argument(
+        "--limit", "-l", type=int, default=100, help="Number of results per clusters")
+    clustering_subparser.add_argument(
+        "--save", "-s", action="store_true", help="Save to navidrome playlist")
+    clustering_subparser.add_argument(
+        "--no-smart-naming", action="store_true", help="Disable playlist smart-naming")
+    clustering_subparser.add_argument(
+        "--smart-naming-no-macro-genre", action="store_true", help="Disable macro genre names")
+    clustering_subparser.add_argument(
+        "--smart-naming-size", type=int, default=2, help="Number of genres for the smart-naming")
+    clustering_subparser.add_argument(
+        "--smart-naming-sep", type=str, default=",", help="Smart naming separator")
+    clustering_subparser.add_argument(
+        "--smart-naming-list", type=str, choices=get_args(GenresList), default="musicbrainz", help="Genres List")
+    clustering_subparser.add_argument(
+        "--prefix", "-p", default="cc/", type=str, help="Playlist name prefix")
+    clustering_subparser.add_argument(
+        "--no-merge", action="store_true", help="Don't merge clusters with same names")
 
     clustering_subparsers = clustering_subparser.add_subparsers(required=True)
 
     clustering_kmeans_parser = clustering_subparsers.add_parser(
-        "kmeans", 
+        "kmeans",
         help="K-Means",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    clustering_kmeans_parser.add_argument("--n_clusters", "-k", type=int, default=20, help="Number of clusters")
+    clustering_kmeans_parser.add_argument(
+        "--n_clusters", "-k", type=int, default=20, help="Number of clusters")
     clustering_kmeans_parser.set_defaults(func=kmean_command)
 
 
 def kmean_command(args):
     from clapclap.clustering.kmeans import KMeansClustering
-    clustering = Clustering(limit=args.limit, save=args.save, smart_naming=not args.no_smart_naming, smart_naming_size=args.smart_naming_size, smart_naming_sep=args.smart_naming_sep, prefix=args.prefix, method=KMeansClustering(k=args.n_clusters), smart_naming_macro_genre=not args.smart_naming_no_macro_genre, genres_list=args.smart_naming_list)
+    clustering = Clustering(limit=args.limit, save=args.save, smart_naming=not args.no_smart_naming, smart_naming_size=args.smart_naming_size, smart_naming_sep=args.smart_naming_sep,
+                            prefix=args.prefix, method=KMeansClustering(k=args.n_clusters), smart_naming_macro_genre=not args.smart_naming_no_macro_genre, genres_list=args.smart_naming_list, no_merge=args.no_merge)
     clustering.process()
-
