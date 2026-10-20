@@ -1,4 +1,4 @@
-from sqlalchemy import String, Boolean, LargeBinary
+from sqlalchemy import String, Boolean, LargeBinary, Integer
 from sqlalchemy.orm import mapped_column
 from pgvector.sqlalchemy import VECTOR
 
@@ -15,3 +15,6 @@ class Embedding(Base):
     songId = mapped_column(String(50), index=True)
     albumId = mapped_column(String(50), index=True)
     artistId = mapped_column(String(50), index=True)
+    embedding_method = mapped_column(String(50), index=True)
+    embedding_duration = mapped_column(Integer())
+    duration = mapped_column(Integer())

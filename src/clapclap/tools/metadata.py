@@ -3,6 +3,7 @@ from tinytag import TinyTag
 from clapclap.update.dataset import FilesystemDatasetAll
 from clapclap.utils.log import logger
 
+
 def get_tag(tinytag, tag):
     results = []
     if tag in tinytag.other:
@@ -13,7 +14,6 @@ def get_tag(tinytag, tag):
     return results
 
 
-
 class Metadata:
     def __init__(self, fingerprint, replaygain):
         self.fingerprint = fingerprint
@@ -22,7 +22,6 @@ class Metadata:
         if not self.fingerprint and not self.replaygain:
             raise Exception("Please select at least one tool checker")
         self.dataset = FilesystemDatasetAll()
-
 
     def run(self):
         for subpath, fullpath, _, _, _ in self.dataset:

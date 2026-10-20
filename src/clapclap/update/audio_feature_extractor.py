@@ -10,7 +10,7 @@ from tinytag import TinyTag
 from transformers import ClapAudioModelWithProjection, ClapProcessor
 
 from clapclap.utils import Timer
-from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE, RESAMPLE_MAX_DURATION
+from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE
 from clapclap.utils.log import logger
 
 
@@ -44,6 +44,7 @@ def fingerprint_in_tags(audio_bytes):
                 return base64_value
     return None
 
+
 def fingerprint_with_fpcalc(audio_bytes):
     result = subprocess.run(
         # use the same args as picard:
@@ -66,20 +67,20 @@ def fingerprint_to_bytes(base64_value):
     return binary_value
 
 
-def resample_with_ffmpeg(audio_bytes):
+def resample_with_ffmpeg(audio_bytes, resample_duration):
     result = subprocess.run([
-            "ffmpeg",
-            "-threads", "1",
-            "-i", "pipe:0",
-            "-map", "0:a:0",
-            "-ac", "1",
-            "-ar", str(CLAP_SAMPLING_RATE),
-            "-t", str(RESAMPLE_MAX_DURATION),
-            "-f", "f32le",
-            "-acodec", "pcm_f32le",
-            # "-v", "quiet",
-            "pipe:1"
-        ],
+        "ffmpeg",
+        "-threads", "1",
+        "-i", "pipe:0",
+        "-map", "0:a:0",
+        "-ac", "1",
+        "-ar", str(CLAP_SAMPLING_RATE),
+        "-t", str(resample_duration),
+        "-f", "f32le",
+        "-acodec", "pcm_f32le",
+        # "-v", "quiet",
+        "pipe:1"
+    ],
         input=audio_bytes,
         capture_output=True,
         check=True
@@ -93,48 +94,58 @@ def resample_with_ffmpeg(audio_bytes):
 
 
 class AudioFeatureExtractor:
-    def __init__(self, max_workers, ignore_existing_fingerprint):
-
+    def __init__(self, embedding_method, embedding_duration, max_workers, ignore_existing_fingerprint):
+        self.embedding_method = embedding_method
+        self.embedding_duration = embedding_duration
         self.max_workers = max_workers
         self.ignore_existing_fingerprint = ignore_existing_fingerprint
+
         logger.debug(f"max_workers: {self.max_workers}")
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         logger.debug(f"Embedding Projection Device: {self.device}")
 
         logger.debug("loading clap model...")
         try:
-            self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
-            self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True)
+            self.processor = ClapProcessor.from_pretrained(
+                CLAP_PROCESSOR, local_files_only=True)
+            self.model = ClapAudioModelWithProjection.from_pretrained(
+                CLAP_MODEL, local_files_only=True)
         except Exception as e:
             print(e)
             self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
-            self.model = ClapAudioModelWithProjection.from_pretrained(CLAP_MODEL)
+            self.model = ClapAudioModelWithProjection.from_pretrained(
+                CLAP_MODEL)
         logger.debug("clap model loaded")
 
         self.model = self.model.to(self.device)
         self.model.eval()
-        
+
     def process_batch(self, batch, subpaths):
         logger.debug("process batch start")
 
         with Timer("batch fingerprint"):
-            fingerprints = threadpool_pipeline(self.fingerprint, batch, subpaths, self.max_workers)
+            fingerprints = threadpool_pipeline(
+                self.fingerprint, batch, subpaths, self.max_workers)
 
         with Timer("batch resample"):
-            audio_arrays = threadpool_pipeline(self.resample, batch, subpaths, self.max_workers)
+            audio_arrays = threadpool_pipeline(
+                self.resample, batch, subpaths, self.max_workers)
 
         with Timer("batch clap"):
             embeddings = self.clap(audio_arrays)
 
-        output = list(zip(fingerprints, embeddings))
-        
+        batch_size = len(fingerprints)
+        output = list(zip(fingerprints, embeddings,
+                      batch_size * [self.embedding_method], batch_size * [self.embedding_duration]))
+
         logger.debug(f"process batch end {len(output)}")
         return output
 
     def resample(self, audio_bytes):
         with Timer("resample"):
-            return resample_with_ffmpeg(audio_bytes)
+            return resample_with_ffmpeg(audio_bytes, self.embedding_duration)
 
     def fingerprint(self, audio_bytes):
         with Timer("fingerprint"):
@@ -149,7 +160,8 @@ class AudioFeatureExtractor:
         return None
 
     def clap(self, audio_arrays):
-        valid_indices = [i for i, a in enumerate(audio_arrays) if a is not None]
+        valid_indices = [i for i, a in enumerate(
+            audio_arrays) if a is not None]
         valid_audio_arrays = [audio_arrays[i] for i in valid_indices]
         if len(valid_audio_arrays) <= 0:
             return [None] * len(audio_arrays)
@@ -167,5 +179,6 @@ class AudioFeatureExtractor:
                 result = outputs.audio_embeds.detach().cpu().numpy()
                 for r in result:
                     embeddings.append(r)
-        valid_embeddings = [embeddings[i] if i in valid_indices else None for i in range(len(audio_arrays))]
+        valid_embeddings = [
+            embeddings[i] if i in valid_indices else None for i in range(len(audio_arrays))]
         return valid_embeddings

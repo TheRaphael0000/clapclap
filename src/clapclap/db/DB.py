@@ -10,8 +10,9 @@ from .Base import Base
 
 class DB():
     def __init__(self):
-        db_path = f"postgresql://{config.POSTGRES_USER}:{config.POSTGRES_PASSWORD}@{config.POSTGRES_HOST}/{config.POSTGRES_DB}"
-        self.engine = create_engine(db_path, connect_args={'connect_timeout': 2})
+        db_path = config.get_db_path()
+        self.engine = create_engine(
+            db_path, connect_args={'connect_timeout': 2})
         self.session = Session(self.engine)
         try:
             with self as session:
@@ -23,7 +24,7 @@ class DB():
 
     def __enter__(self):
         return self.session.__enter__()
-    
+
     def __exit__(self, *args):
         return self.session.__exit__(*args)
 
@@ -36,6 +37,7 @@ class DB():
             session.execute(text('CREATE EXTENSION IF NOT EXISTS vector'))
             session.commit()
             Base.metadata.create_all(self.engine)
-            session.execute(text('CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists = 250);'))
+            session.execute(text(
+                'CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists = 250);'))
             session.commit()
         logger.info("Database created")

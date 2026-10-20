@@ -231,7 +231,7 @@ class Navidrome:
             logger.debug(song)
             relative_path = re.sub(rf"^{libPath}(.*)$", r"\1", song["path"])
             lookup_data.append(
-                {"path": relative_path, "songId": song["id"], "albumId": song["albumId"], "artistId": song["artistId"]})
+                {"path": relative_path, "songId": song["id"], "albumId": song["albumId"], "artistId": song["artistId"], "duration": song.get("duration", 0)})
 
         db = DB()
         with db as session:

@@ -40,6 +40,7 @@ dependencies = [
     "requests>=2.34.2",
     "tqdm>=4.70.0",
     "psycopg[binary]>=3.3.6",
+    "alembic>=1.20.0",
 ]
 
 [dependency-groups]
@@ -52,6 +53,7 @@ all = [
     "torch>=2.14.0",
     "torchcodec>=0.16.0",
     "torchaudio>=2.11.0",
+    "umap-learn>=0.5.12",
 ]
 
 [project.urls]
@@ -69,3 +71,9 @@ source = "vcs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clapclap"]
+
+[tool.alembic]
+script_location = "%(here)s/alembic"
+prepend_sys_path = [
+    "."
+]

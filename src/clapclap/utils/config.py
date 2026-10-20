@@ -2,6 +2,7 @@ from pathlib import Path
 from decouple import Config, RepositoryIni
 from clapclap.utils.log import logger
 
+
 class Configuration:
     def __init__(self):
         pass
@@ -49,8 +50,8 @@ class Configuration:
     @property
     def DATA_QUICKSCAN_STATE(self) -> str:
         return self.config("DATA_QUICKSCAN_STATE", default=self.ini_file_path.parent / Path("quickscan_state.json"))
-    
-    # --- NAVIDROME ---    
+
+    # --- NAVIDROME ---
     @property
     def NAVIDROME_URL(self) -> str:
         return self.config("NAVIDROME_URL", default="http://127.0.0.1:4533/")
@@ -62,7 +63,7 @@ class Configuration:
     @property
     def NAVIDROME_PASSWORD(self) -> str:
         return self.config("NAVIDROME_PASSWORD", default="password")
-    
+
     @property
     def NAVIDROME_ROOT_DIR(self) -> str:
         return self.config("NAVIDROME_ROOT_DIR", default="/music/")
@@ -70,17 +71,23 @@ class Configuration:
     @property
     def NAVIDROME_PLAYLIST_PREFIX(self) -> str:
         return self.config("NAVIDROME_PLAYLIST_PREFIX", default="")
-    
+
     def default_config_path(self):
         filename = "config.ini"
         try:
             from platformdirs import user_config_dir
-            config_dir = Path(user_config_dir(appname="clapclap", appauthor=False))
+            config_dir = Path(user_config_dir(
+                appname="clapclap", appauthor=False))
             config_dir.mkdir(parents=True, exist_ok=True)
             return str(config_dir / filename)
         except:
             default_config_path = "/etc/clapclap/{filename}"
-            logger.info(f"User directory not available, defaulting to '{default_config_path}'")
+            logger.info(
+                f"User directory not available, defaulting to '{default_config_path}'")
             return default_config_path
+
+    def get_db_path(self):
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}"
+
 
 config = Configuration()

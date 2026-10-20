@@ -13,16 +13,19 @@ from clapclap.utils.config import config
 from clapclap.navidrome.navidrome import Navidrome
 from clapclap.utils.log import logger
 
+
 class DBChecker:
     def __init__(self):
         self.db = DB()
 
     def check(self, subpath):
         with self.db as session:
-            is_exist = session.scalar(select(exists().where(Embedding.path == subpath)))
+            is_exist = session.scalar(
+                select(exists().where(Embedding.path == subpath)))
             if is_exist:
                 return True
         return False
+
 
 class NavidromeDataset(IterableDataset):
     def __init__(self, force_process):
@@ -45,11 +48,12 @@ class NavidromeDataset(IterableDataset):
             audio_bytes = navidrome.download(songId=s["id"])
             logger.info(f"Loaded: '{subpath}'")
             yield {
-                "audio_bytes":audio_bytes,
-                "subpath":subpath,
-                "songId":s["id"],
-                "albumId": s["albumId"],
-                "artistId": s["artistId"],
+                "audio_bytes": audio_bytes,
+                "subpath": subpath,
+                "songId": s.get("id", ""),
+                "albumId": s.get("albumId", ""),
+                "artistId": s.get("artistId", ""),
+                "duration": s.get("duration", 0),
             }
 
 
@@ -74,11 +78,12 @@ class FilesystemDatasetAll(IterableDataset):
 
 
 class FilesystemDataset(IterableDataset):
-    def __init__(self, force_process):
+    def __init__(self, force_process, full_scan):
         self.force_process = force_process
         self.root_dir = pathlib.Path(config.DATA_ROOT_DIR)
 
-        self.quickscan = Quickscan(self.root_dir, config.DATA_QUICKSCAN_STATE, force=self.force_process)
+        self.quickscan = Quickscan(
+            self.root_dir, config.DATA_QUICKSCAN_STATE, full_scan=full_scan)
         self.db_checker = DBChecker()
 
     def __iter__(self):
@@ -99,11 +104,12 @@ class FilesystemDataset(IterableDataset):
             audio_bytes = open(fullpath, "rb").read()
 
             logger.info(f"Loaded: '{subpath}'")
-            
+
             yield {
-                "audio_bytes":audio_bytes,
-                "subpath":subpath,
+                "audio_bytes": audio_bytes,
+                "subpath": subpath,
                 "songId": "",
                 "albumId": "",
                 "artistId": "",
+                "duration": "",
             }

@@ -6,10 +6,10 @@ from clapclap.utils.log import logger
 
 
 class Quickscan:
-    def __init__(self, scan_folder_path, state_path, force):
+    def __init__(self, scan_folder_path, state_path, full_scan):
         self.scan_folder_path = scan_folder_path
         self.state_path = state_path
-        self.force = force
+        self.full_scan = full_scan
 
     def load_state(self):
         logger.debug(f"loading state file: {self.state_path}")
@@ -35,7 +35,7 @@ class Quickscan:
             path = str(f.absolute())
             time = f.stat().st_mtime
 
-            if self.force or path not in self.saved_state or time != self.saved_state[path]:
+            if self.full_scan or path not in self.saved_state or time != self.saved_state[path]:
                 is_dir = f.is_dir()
                 if not is_dir:
                     yield f
