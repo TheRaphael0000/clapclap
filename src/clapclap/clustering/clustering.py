@@ -116,12 +116,14 @@ class Clustering:
         if self.oddities > 0:
             logger.info("Segregating oddities")
             oddities = []
-            playlists_ = [(f"{self.prefix}oddities", oddities)]
+            playlists_ = []
             for playlist_name, playlist_songs in playlists:
                 if len(playlist_songs) <= self.oddities:
                     oddities.extend(playlist_songs)
                 else:
                     playlists_.append((playlist_name, playlist_songs))
+            if len(oddities) > 0:
+                playlists_.append((f"{self.prefix}oddities", oddities))
             playlists = playlists_
 
         if not self.no_save:

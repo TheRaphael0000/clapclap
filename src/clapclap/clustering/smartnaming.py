@@ -51,14 +51,20 @@ class SmartNaming:
     def get_name(self, centroid):
         names = []
 
+        metric = 'cosine'
+        if self.reducer:
+            metric = 'euclidean'
+
         if not self.no_macro_genre:
             macro_distances = cdist(
-                [centroid], self.macro_genres_centroids, metric='cosine')[0]
+                [centroid],
+                self.macro_genres_centroids,
+                metric=metric
+            )[0]
             macro_genre = self.macro_genres[np.argmin(macro_distances)]
             names.append(macro_genre)
 
-        distances = cdist([centroid], self.genres_centroids,
-                          metric='cosine')[0]
+        distances = cdist([centroid], self.genres_centroids, metric=metric)[0]
         arg_sorted_distances = np.argsort(distances)
         selected_indices = arg_sorted_distances[0:self.size]
         selected_genres = self.genres[selected_indices]

@@ -36,7 +36,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     clustering_subparser.add_argument(
         "--no-merge", action="store_true", help="Don't merge clusters with same labels. By default will merge clusters of same name to avoid having multiple playlists with the same name, but sometimes keeping them apart can be relevant")
     clustering_subparser.add_argument(
-        "--oddities", type=int, default=10, help="If a cluster has a number of tracks less or equal to this value, tracks will be put inside a 'oddities' cluster. 0 to disable")
+        "--oddities", type=int, default=0, help="If a cluster has a number of tracks less or equal to this value, tracks will be put inside a 'oddities' cluster. 0 to disable")
 
     clustering_subparsers = clustering_subparser.add_subparsers(required=True)
 
