@@ -13,7 +13,6 @@ class AgglomerativeClusteringMethod(ClusteringMethod):
 
     def get_cluster_labels(self, embeddings):
         kmeans = AgglomerativeClustering(
-            n_clusters=self.k, metric="cosine", linkage="average")
+            n_clusters=self.k, metric="euclidean", linkage="average")
         cluster_labels = kmeans.fit_predict(embeddings)
-        logger.info(np.histogram(cluster_labels, bins=self.k-1)[0])
         return cluster_labels

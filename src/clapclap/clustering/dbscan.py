@@ -13,10 +13,8 @@ class DBScanMethod(ClusteringMethod):
         self.min_samples = min_samples
 
     def get_cluster_labels(self, embeddings):
+        logger.info("DBScan")
         method = DBSCAN(
             eps=self.eps, min_samples=self.min_samples, metric="euclidean")
         cluster_labels = method.fit_predict(embeddings)
-        unique = np.unique(cluster_labels)
-        print(unique)
-        logger.info(np.histogram(cluster_labels, bins=len(unique))[0])
         return cluster_labels
