@@ -10,7 +10,10 @@ class Configuration:
     def init(self, config_path):
         self.ini_file_path = Path(config_path)
         if not self.ini_file_path.exists():
-            self.ini_file_path.parent.mkdir(parents=True)
+            try:
+                self.ini_file_path.parent.mkdir(parents=True)
+            except:
+                pass
             open(self.ini_file_path, "w").write("[settings]\n")
 
         self.config = Config(RepositoryIni(self.ini_file_path))
