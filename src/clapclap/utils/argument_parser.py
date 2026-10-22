@@ -12,11 +12,12 @@ from clapclap.utils.config import config
 
 def parse():
     parser = argparse.ArgumentParser(
-        prog="Clapclap CLI",
+        prog="clapclap CLI",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--debug", action="store_true", help="Show debug logs")
-    parser.add_argument("--config", type=str, help="Path to the config file", default=config.default_config_path())
+    parser.add_argument("--config", type=str, help="Path to the config file",
+                        default=config.default_config_path())
 
     subparsers = parser.add_subparsers(
         dest="command",

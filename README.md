@@ -127,8 +127,8 @@ clapclap navidrome update --limit 50
 
 ```bash
 #!/bin/zsh
-# remove navidrome playlists starting with 'cc'
-clapclap navidrome playlist -r "cc.*" -d
-# create 500 playlists using kmeans on navidrome and name them using 1 genre for the smart-naming
-clapclap clustering --save --prefix "cc/" --smart-naming-size 1 kmeans -k 500
+# remove navidrome playlists starting with 'cc/'
+clapclap navidrome playlist -r "cc/.*" -d
+# create 300 playlists using kmeans on navidrome and with a prefix "cc/" will use "smart-naming" by default
+clapclap clustering --prefix "cc/" kmeans -k 300
 ```

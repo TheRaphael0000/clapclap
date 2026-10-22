@@ -15,7 +15,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
     sync_parser = navidrome_subparsers.add_parser(
         "sync",
-        help="Sync Clapclap DB with Navidrome",
+        help="Sync clapclap DB with Navidrome",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     sync_parser.add_argument("--limit", "-l", type=int, default=-1,

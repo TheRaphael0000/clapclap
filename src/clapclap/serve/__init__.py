@@ -3,10 +3,11 @@ import argparse
 from argparse import _SubParsersAction, ArgumentParser
 from clapclap.utils.log import logger
 
+
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     subparser = subparsers.add_parser(
-        "serve", 
-        help="Start a rest server",
+        "serve",
+        help="Start a REST server",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     subparser.add_argument("--host", default="0.0.0.0", help="Socket host")

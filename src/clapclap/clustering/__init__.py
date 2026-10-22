@@ -42,7 +42,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
     clustering_kmeans_parser = clustering_subparsers.add_parser(
         "kmeans",
-        help="K-Means",
+        help="Use the scikit-learn K-Means clustering algorithm",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     clustering_kmeans_parser.add_argument(
@@ -55,7 +55,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
     clustering_agglomerative_parser = clustering_subparsers.add_parser(
         "agglomerative",
-        help="Agglomerative Clustering",
+        help="Use the scikit-learn Agglomerative clustering algorithm",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     clustering_agglomerative_parser.add_argument(
@@ -64,7 +64,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
     clustering_dbscan_parser = clustering_subparsers.add_parser(
         "dbscan",
-        help="DBSCAN Clustering",
+        help="Use the scikit-learn DBSCAN clustering algorithm",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     clustering_dbscan_parser.add_argument(
@@ -75,7 +75,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
     clustering_hdbscan_parser = clustering_subparsers.add_parser(
         "hdbscan",
-        help="HDBSCAN Clustering",
+        help="Use the scikit-learn HDBSCAN clustering algorithm",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     clustering_hdbscan_parser.set_defaults(func=hdbscan_command)

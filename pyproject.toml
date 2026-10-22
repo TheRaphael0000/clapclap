@@ -3,6 +3,7 @@ name = "clapclap"
 description = "A CLAP CLI for navidrome"
 readme = "README.md"
 requires-python = ">=3.13"
+version = "0.0.0"
 keywords = [
     "audio-processing",
     "audio-recommendation",
@@ -22,7 +23,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Operating System :: POSIX :: Linux",
 ]
-dynamic = ["version"]
 dependencies = [
     "fastapi[standard]>=0.141.1",
     "platformdirs>=4.13.0",
@@ -66,14 +66,9 @@ clapclap = "clapclap.cli:main"
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
-[tool.hatch.version]
-source = "vcs"
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/clapclap"]
 
 [tool.alembic]
 script_location = "%(here)s/alembic"
-prepend_sys_path = [
-    "."
-]
+prepend_sys_path = ["."]
