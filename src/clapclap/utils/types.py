@@ -1,5 +1,5 @@
 from typing import Literal
 
-GenresList = Literal["everynoise", "everynoise-100",
-                     "everynoise-1000", "musicbrainz", "navidrome", "all"]
+LabelList = Literal["main_genres", "everynoise", "everynoise-100",
+                    "everynoise-1000", "musicbrainz", "emotions", "navidrome", "stdin", "all"]
 DataSource = Literal["fs", "navidrome"]

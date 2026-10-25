@@ -1,5 +1,5 @@
 # hand-made list, can probably be improved
-macro_genres = [
+main_genres = [
     'ambient',
     'blues',
     'classical',

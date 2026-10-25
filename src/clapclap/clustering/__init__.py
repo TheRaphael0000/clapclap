@@ -4,7 +4,8 @@ from argparse import _SubParsersAction, ArgumentParser
 from typing import get_args
 
 from clapclap.clustering.clustering import Clustering
-from clapclap.utils.types import GenresList
+from clapclap.utils.types import LabelList
+from clapclap.utils.log import logger
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
@@ -28,11 +29,13 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     clustering_subparser.add_argument(
         "--smart-naming-no-macro-genre", action="store_true", help="Disable macro genre names")
     clustering_subparser.add_argument(
-        "--smart-naming-size", type=int, default=1, help="Number of genres for the smart-naming")
+        "--smart-naming-labels", type=str, nargs="+", choices=get_args(LabelList), default=["main_genres", "musicbrainz"], help="Label lists to use for each level of a smart-naming name")
     clustering_subparser.add_argument(
-        "--smart-naming-sep", type=str, default=",", help="Smart naming separator")
+        "--smart-naming-sizes", type=int, nargs="+", default=[1, 1], help="Number of labels for each smart-naming level, will take the Nth first closest labels")
     clustering_subparser.add_argument(
-        "--smart-naming-list", type=str, choices=get_args(GenresList), default="musicbrainz", help="Genres List")
+        "--smart-naming-label-sep", type=str, default=",", help="Smart-naming label separator")
+    clustering_subparser.add_argument(
+        "--smart-naming-level-sep", type=str, default="/", help="Smart-naming level separator")
     clustering_subparser.add_argument(
         "--no-merge", action="store_true", help="Don't merge clusters with same labels. By default will merge clusters of same name to avoid having multiple playlists with the same name, but sometimes keeping them apart can be relevant")
     clustering_subparser.add_argument(
@@ -82,16 +85,25 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 
 def get_common_args(args):
+    smart_naming_labels = args.smart_naming_labels
+    smart_naming_sizes = args.smart_naming_sizes
+
+    if len(smart_naming_sizes) < len(smart_naming_labels):
+        smart_naming_sizes = smart_naming_sizes + \
+            ((len(smart_naming_labels) - len(smart_naming_sizes)) * [1])
+    if len(smart_naming_sizes) > len(smart_naming_labels):
+        smart_naming_sizes = smart_naming_sizes[0:len(smart_naming_labels)]
+
     return {
         "min_duration": args.min_duration,
         "reduction": args.reduction,
         "reduction_components": args.reduction_components,
         "prefix": args.prefix,
         "no_smart_naming": args.no_smart_naming,
-        "smart_naming_size": args.smart_naming_size,
-        "smart_naming_sep": args.smart_naming_sep,
-        "smart_naming_no_macro_genre": args.smart_naming_no_macro_genre,
-        "genres_list": args.smart_naming_list,
+        "smart_naming_labels": smart_naming_labels,
+        "smart_naming_sizes": smart_naming_sizes,
+        "smart_naming_label_sep": args.smart_naming_label_sep,
+        "smart_naming_level_sep": args.smart_naming_level_sep,
         "no_merge": args.no_merge,
         "oddities": args.oddities,
         "no_save": args.no_save,

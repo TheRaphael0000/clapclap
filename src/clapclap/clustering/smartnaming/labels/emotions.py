@@ -1,0 +1,27 @@
+# https://en.wikipedia.org/wiki/Emotion_classification#Plutchik's_wheel_of_emotions
+emotions = [
+    "Serenity",
+    "Pensiveness",
+    "Joy",
+    "Sadness",
+    "Ecstasy",
+    "Grief",
+    "Acceptance",
+    "Boredom",
+    "Trust",
+    "Disgust",
+    "Admiration",
+    "Loathing",
+    "Apprehension",
+    "Annoyance",
+    "Fear",
+    "Anger",
+    "Terror",
+    "Rage",
+    "Distraction",
+    "Interest",
+    "Surprise",
+    "Anticipation",
+    "Amazement",
+    "Vigilance"
+]

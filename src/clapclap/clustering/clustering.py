@@ -2,10 +2,9 @@ import collections
 import numpy as np
 from sqlalchemy import select
 
-from clapclap.clustering.smartnaming import SmartNaming
+from clapclap.clustering.smartnaming.SmartNaming import SmartNaming
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
-from clapclap.utils.types import GenresList
 from clapclap.utils.log import logger
 
 
@@ -28,10 +27,10 @@ class Clustering:
             method: ClusteringMethod,
             prefix: str,
             no_smart_naming: bool,
-            smart_naming_size: int,
-            smart_naming_sep: str,
-            smart_naming_no_macro_genre: bool,
-            genres_list: GenresList,
+            smart_naming_labels,
+            smart_naming_sizes: int,
+            smart_naming_label_sep: str,
+            smart_naming_level_sep: str,
             no_merge: bool,
             oddities: int,
             no_save: bool,
@@ -43,10 +42,10 @@ class Clustering:
         self.method = method
         self.prefix = prefix
         self.no_smart_naming = no_smart_naming
-        self.smart_naming_size = smart_naming_size
-        self.smart_naming_sep = smart_naming_sep
-        self.smart_naming_no_macro_genre = smart_naming_no_macro_genre
-        self.genres_list = genres_list
+        self.smart_naming_labels = smart_naming_labels
+        self.smart_naming_sizes = smart_naming_sizes
+        self.smart_naming_label_sep = smart_naming_label_sep
+        self.smart_naming_level_sep = smart_naming_level_sep
         self.no_merge = no_merge
         self.oddities = oddities
         self.no_save = no_save
@@ -85,10 +84,10 @@ class Clustering:
         if not self.no_smart_naming:
             logger.info("Computing smart-names")
             smart_naming = SmartNaming(
-                self.smart_naming_size,
-                self.smart_naming_sep,
-                self.smart_naming_no_macro_genre,
-                self.genres_list,
+                self.smart_naming_labels,
+                self.smart_naming_sizes,
+                self.smart_naming_label_sep,
+                self.smart_naming_level_sep,
                 reducer  # must compute the names in the reduced space if available
             )
             for label in np.unique(cluster_labels):

@@ -1,11 +1,5 @@
 import torch
 from transformers import AutoTokenizer, ClapTextModelWithProjection
-from torch.utils.data import Dataset
-from clapclap.utils.musicbrainz_genres import musicbrainz_genres
-from clapclap.utils.everynoise_genres import everynoise_genres
-from clapclap.utils.macro_genres import macro_genres
-from clapclap.utils.types import GenresList
-
 from clapclap.utils import Timer
 from clapclap.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
 from clapclap.utils.log import logger
@@ -13,14 +7,18 @@ from clapclap.utils.log import logger
 
 class TextFeatureExtractor:
     def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         logger.debug(f"Embedding Projection Device: {self.device}")
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR, local_files_only=True)
-            self.model = ClapTextModelWithProjection.from_pretrained(CLAP_MODEL, local_files_only=True)
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                CLAP_PROCESSOR, local_files_only=True)
+            self.model = ClapTextModelWithProjection.from_pretrained(
+                CLAP_MODEL, local_files_only=True)
         except Exception as e:
             self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR)
-            self.model = ClapTextModelWithProjection.from_pretrained(CLAP_MODEL)
+            self.model = ClapTextModelWithProjection.from_pretrained(
+                CLAP_MODEL)
 
         self.model = self.model.to(self.device)
         self.model.eval()
@@ -28,8 +26,8 @@ class TextFeatureExtractor:
     def clap(self, texts):
         with Timer("tokenizer"):
             inputs = self.tokenizer(
-                texts, 
-                padding=True, 
+                texts,
+                padding=True,
                 return_tensors="pt"
             )
 
@@ -41,38 +39,3 @@ class TextFeatureExtractor:
             for r in result:
                 embeddings.append(r)
         return embeddings
-
-class MacroGenreDataset(Dataset):
-    def __init__(self):
-        self.genres = macro_genres
-
-    def __len__(self):
-        return len(self.genres)
-
-    def __getitem__(self, idx):
-        return self.genres[idx]
-
-class GenreDataset(Dataset):
-    def __init__(self, genres_list: GenresList):
-        genres = set()
-        if genres_list == "everynoise" or genres_list == "all":
-            genres |= set(everynoise_genres)
-        if genres_list == "everynoise-100" or genres_list == "all":
-            genres |= set(everynoise_genres[0:100])
-        if genres_list == "everynoise-1000" or genres_list == "all":
-            genres |= set(everynoise_genres[0:1000])
-        if genres_list == "musicbrainz" or genres_list == "all":
-            genres |= set(musicbrainz_genres)
-        if genres_list == "navidrome" or genres_list == "all":
-            from clapclap.navidrome.navidrome import Navidrome
-            navidrome = Navidrome()
-            navidrome_genres = navidrome.get_genres()
-            genres_ = [g["value"] for g in navidrome_genres["genres"]["genre"] if g["songCount"] > 10]
-            genres |= set(genres_)
-        self.genres = list(genres)
-
-    def __len__(self):
-        return len(self.genres)
-
-    def __getitem__(self, idx):
-        return self.genres[idx]
