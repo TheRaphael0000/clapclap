@@ -13,10 +13,10 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository
+            - name: Checkout Repository
               uses: actions/checkout@v7.0.1
 
-            - name: Process Version
+            - name: Process Version Tag
               id: version
               env:
                   REF_NAME: ${{ github.ref_name }}
@@ -24,10 +24,20 @@ jobs:
                   VERSION="${REF_NAME#v}"
                   echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-            - name: Configuring version
+            - name: Set up Python
+              uses: actions/setup-python@v7.1.0
+              with:
+                  python-version: "3.13"
+
+            - name: Install Hatch
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install --upgrade hatch
+
+            - name: Configuring Version
               run: sed s/"0.0.0"/"${{ steps.version.outputs.version }}"/g -i pyproject.toml
 
-            - name: Build
+            - name: Hatch Build
               run: hatch build
 
             - name: Create Release
