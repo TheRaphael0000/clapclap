@@ -12,7 +12,7 @@ services:
             - 8001:80
         networks:
           - clapclap
-        restart: always
+        restart: unless-stopped
     db:
         image: pgvector/pgvector:pg16
         env_file:
@@ -23,6 +23,7 @@ services:
             - 5432:5432
         networks:
           - clapclap
+        restart: unless-stopped
 
 networks:
   clapclap:
