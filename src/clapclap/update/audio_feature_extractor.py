@@ -12,6 +12,7 @@ from transformers import ClapAudioModelWithProjection, ClapProcessor
 from clapclap.utils import Timer
 from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE
 from clapclap.utils.log import logger
+from clapclap.utils.config import config
 
 
 def threadpool_pipeline(func, batch, subpaths, max_workers):
@@ -67,20 +68,81 @@ def fingerprint_to_bytes(base64_value):
     return binary_value
 
 
-def resample_with_ffmpeg(audio_bytes, resample_duration):
-    result = subprocess.run([
+def get_duration(audio_bytes):
+    cmd = [
+        "ffprobe",
+        "-i", "pipe:0",
+        "-v", "error",
+        "-show_entries", "format=duration",
+        "-of", "default=noprint_wrappers=1:nokey=1"
+    ]
+    result = subprocess.run(
+        cmd,
+        input=audio_bytes,
+        capture_output=True,
+        check=True
+    )
+    return float(result.stdout.strip())
+
+
+def get_slices_timestamps(duration, max_duration, slices):
+    slices_timestamps = []
+    if slices > 0:
+        slice_duration = max_duration / slices
+    else:
+        slice_duration = max_duration
+    discard_duration = duration - max_duration
+    if slices > 1:
+        duration_between_slice = discard_duration / (slices - 1)
+    else:
+        duration_between_slice = 0
+
+    for i in range(slices):
+        start = i * (slice_duration + duration_between_slice)
+        end = start + slice_duration
+        slices_timestamps.append([start, end])
+
+    return slices_timestamps
+
+
+def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
+    cmd = [
         "ffmpeg",
+        "-nostdin",
         "-threads", "1",
         "-i", "pipe:0",
         "-map", "0:a:0",
         "-ac", "1",
         "-ar", str(CLAP_SAMPLING_RATE),
-        "-t", str(resample_duration),
+    ]
+
+    if method == "start":
+        cmd.extend(["-t", str(resample_duration)])
+    elif method == "slice":
+        duration = get_duration(audio_bytes)
+        # do nothing (like full) if the clip is smaller than the resample duration
+        if resample_duration <= duration:
+            between = get_slices_timestamps(
+                duration, resample_duration, slices)
+            between_text = "+".join(
+                [fr"between(t\,{a:.2f}\,{b:.2f})" for a, b in between])
+            cmd.extend(["-af", f"aselect='{between_text}',asetpts=N/SR/TB"])
+
+    elif method == "full":
+        pass
+    else:
+        raise Exception("invalid method")
+
+    cmd.extend([
         "-f", "f32le",
         "-acodec", "pcm_f32le",
         # "-v", "quiet",
         "pipe:1"
-    ],
+    ])
+
+    # print(" ".join(cmd))
+    result = subprocess.run(
+        cmd,
         input=audio_bytes,
         capture_output=True,
         check=True
@@ -94,9 +156,10 @@ def resample_with_ffmpeg(audio_bytes, resample_duration):
 
 
 class AudioFeatureExtractor:
-    def __init__(self, embedding_method, embedding_duration, max_workers, ignore_existing_fingerprint):
-        self.embedding_method = embedding_method
-        self.embedding_duration = embedding_duration
+    def __init__(self, max_workers, ignore_existing_fingerprint):
+        self.embedding_method = config.EMBEDDING_METHOD
+        self.embedding_duration = float(config.EMBEDDING_DURATION)
+        self.embedding_method_slices = int(config.EMBEDDING_METHOD_SLICES)
         self.max_workers = max_workers
         self.ignore_existing_fingerprint = ignore_existing_fingerprint
 
@@ -145,7 +208,7 @@ class AudioFeatureExtractor:
 
     def resample(self, audio_bytes):
         with Timer("resample"):
-            return resample_with_ffmpeg(audio_bytes, self.embedding_duration)
+            return resample_with_ffmpeg(audio_bytes, self.embedding_method, self.embedding_duration, self.embedding_method_slices)
 
     def fingerprint(self, audio_bytes):
         with Timer("fingerprint"):

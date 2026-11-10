@@ -33,7 +33,9 @@ class Updater:
         atexit.register(self.stop_dataloader)
 
         self.audio_feature_extractor = AudioFeatureExtractor(
-            "start", 150, max_workers, ignore_existing_fingerprint)
+            max_workers,
+            ignore_existing_fingerprint
+        )
         self.to_save_queue = queue.Queue()
 
     def stop_dataloader(self):

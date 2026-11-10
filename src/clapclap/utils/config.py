@@ -75,6 +75,19 @@ class Configuration:
     def NAVIDROME_PLAYLIST_PREFIX(self) -> str:
         return self.config("NAVIDROME_PLAYLIST_PREFIX", default="")
 
+    # --- Embedding ---
+    @property
+    def EMBEDDING_METHOD(self) -> str:
+        return self.config("EMBEDDING_METHOD", default="slice")
+
+    @property
+    def EMBEDDING_DURATION(self) -> str:
+        return self.config("EMBEDDING_DURATION", default="150")
+
+    @property
+    def EMBEDDING_METHOD_SLICES(self) -> str:
+        return self.config("EMBEDDING_METHOD_SLICES", default="4")
+
     def default_config_path(self):
         filename = "config.ini"
         try:

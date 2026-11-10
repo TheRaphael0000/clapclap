@@ -1,5 +1,6 @@
-from sqlalchemy import String, Boolean, LargeBinary, Integer
+from sqlalchemy import String, LargeBinary, Integer, DateTime
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql import func
 from pgvector.sqlalchemy import VECTOR
 
 from clapclap.utils.consts import CLAP_EMBEDDING_SIZE
@@ -18,3 +19,4 @@ class Embedding(Base):
     embedding_method = mapped_column(String(50), index=True)
     embedding_duration = mapped_column(Integer())
     duration = mapped_column(Integer())
+    datetime = mapped_column(DateTime(), server_default=func.now())
