@@ -1,5 +1,5 @@
 from clapclap.db import DB
-from clapclap.query.similarity_query import SimilarityQuery
+from clapclap.query.embedding_fetcher.dbEmbedding import DBEmbedding
 
 
 class DBDATA:
@@ -8,7 +8,7 @@ class DBDATA:
         pass
 
     def info(self):
-        embeddings = SimilarityQuery.count()
+        embeddings = DBEmbedding.count()
         return {
             "db": {
                 "embeddings": embeddings,

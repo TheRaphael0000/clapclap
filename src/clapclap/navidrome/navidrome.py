@@ -198,7 +198,7 @@ class Navidrome:
         for batch in songIds_batched:
             self.update_playlist(playlistId=playlistId, songIdToAdd=batch)
 
-    def create_playlist(self, name, songIds):
+    def create_playlist(self, name: str, songIds):
         songIds_batched = itertools.batched(iterable=songIds, n=200)
         first_batch = next(songIds_batched)
         playlist = self.query_navidrome("createPlaylist", {

@@ -2,21 +2,21 @@ from sqlalchemy import select
 from pgvector.sqlalchemy import avg
 
 from clapclap.db import DB, Embedding
-from clapclap.query.query import Query
+from clapclap.query.fetchers.embeddingFetcher import EmbeddingFetcher
 from clapclap.utils.log import logger
 
 
-class SimilarityQuery(Query):
-    def __init__(self, limit, temperature, path = None, songId = None, albumId = None, artistId = None):
-        super().__init__(temperature=temperature, limit=limit)
-        logger.debug(f"Query created path={path} songId={songId} albumId={albumId} artistId={artistId}")
+class DBEmbedding(EmbeddingFetcher):
+    def __init__(self, path=None, songId=None, albumId=None, artistId=None):
+        logger.debug(
+            f"DBEmbedding created path={path} songId={songId} albumId={albumId} artistId={artistId}")
+        self.db = DB()
         self.path = path
         self.songId = songId
         self.albumId = albumId
         self.artistId = artistId
 
-
-    def get(self):
+    def get_embedding(self):
         if self.path is not None:
             embedding = self.get_embedding_by_path(self.path)
         if self.songId is not None:
@@ -27,14 +27,12 @@ class SimilarityQuery(Query):
             embedding = self.get_embedding_by_artistId(self.artistId)
         if embedding is None:
             raise Exception("Embedding not found")
-        results = self.query_similar(embedding)
-        return results
-
+        return embedding
 
     def get_embedding_by_path(self, path):
         with self.db as session:
             return session.scalar(select(Embedding.embedding).where(Embedding.path == path))
-        
+
     def get_embedding_by_songId(self, songId):
         with self.db as session:
             return session.scalar(select(Embedding.embedding).where(Embedding.songId == songId))
@@ -42,7 +40,7 @@ class SimilarityQuery(Query):
     def get_embedding_by_albumId(self, albumId):
         with self.db as session:
             return session.scalar(select(avg(Embedding.embedding)).where(Embedding.albumId == albumId))
-        
+
     def get_embedding_by_artistId(self, artistId):
         with self.db as session:
             return session.scalar(select(avg(Embedding.embedding)).where(Embedding.artistId == artistId))

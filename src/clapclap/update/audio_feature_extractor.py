@@ -125,7 +125,7 @@ def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
             between = get_slices_timestamps(
                 duration, resample_duration, slices)
             between_text = "+".join(
-                [fr"between(t\,{a:.2f}\,{b:.2f})" for a, b in between])
+                [fr"between(t\,{a:.6f}\,{b:.6f})" for a, b in between])
             cmd.extend(["-af", f"aselect='{between_text}',asetpts=N/SR/TB"])
 
     elif method == "full":
