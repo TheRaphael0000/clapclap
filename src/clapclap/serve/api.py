@@ -51,7 +51,7 @@ def create_app(with_dht):
             raise HTTPException(status_code=404, detail=str(e))
 
     @app.get("/similar_artists")
-    async def route_query(request: Request, limit: int = 100, songId: str = None, albumId: str = None, artistId: str = None):
+    async def route_query(request: Request, limit: int = 10, songId: str = None, albumId: str = None, artistId: str = None):
         try:
             embedding = DBEmbedding(
                 songId=songId,

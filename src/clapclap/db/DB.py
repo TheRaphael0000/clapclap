@@ -17,7 +17,7 @@ class DB():
         try:
             with self as session:
                 session.execute(text("SELECT 1"))
-            logger.info("Database connection succeeded")
+            logger.debug("Database connection succeeded")
         except Exception as e:
             logger.error(f"Database connection failed\n{e}")
             exit()
