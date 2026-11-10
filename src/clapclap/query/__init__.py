@@ -56,11 +56,20 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 def process_query(embedding, args, name):
     from .queries.similarSongs import SimilarSongs
-    query = SimilarSongs(
-        embedding,
-        limit=args.limit,
-        temperature=args.temperature
-    )
+    from .queries.similarArtists import SimilarArtists
+
+    if args.artists:
+        query = SimilarArtists(
+            embedding,
+            limit=args.limit,
+        )
+    else:
+        query = SimilarSongs(
+            embedding,
+            limit=args.limit,
+            temperature=args.temperature
+        )
+
     if not args.quiet:
         if args.json:
             print(query.get_json())

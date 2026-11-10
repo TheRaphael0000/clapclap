@@ -1,5 +1,5 @@
 from clapclap.db import DB
-from clapclap.query.embedding_fetcher.dbEmbedding import DBEmbedding
+from clapclap.query.fetchers.dbEmbedding import DBEmbedding
 
 
 class DBDATA:

@@ -1,4 +1,4 @@
-from clapclap.query.embedding_fetcher.embeddingFetcher import EmbeddingFetcher
+from clapclap.query.fetchers.embeddingFetcher import EmbeddingFetcher
 from clapclap.update.text_feature_extractor import TextFeatureExtractor
 
 from clapclap.utils.log import logger

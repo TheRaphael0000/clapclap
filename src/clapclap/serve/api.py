@@ -1,19 +1,14 @@
-from enum import Enum
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
+import traceback
 
 from clapclap.db import DB
-from clapclap.query.embedding_fetcher.dbEmbedding import DBEmbedding
+from clapclap.query.fetchers.dbEmbedding import DBEmbedding
 from clapclap.query.queries.similarSongs import SimilarSongs
+from clapclap.query.queries.similarArtists import SimilarArtists
 from clapclap.serve.db_data import DBDATA
 from clapclap.serve.dht_db import DHTDB
 from clapclap.utils.log import logger
-
-
-class ProximityFunctions(str, Enum):
-    max_inner_product = "max_inner_product"
-    cosine_distance = "cosine_distance"
-    l1_distance = "l1_distance"
 
 
 def create_app(with_dht):
@@ -38,7 +33,7 @@ def create_app(with_dht):
         return info
 
     @app.get("/similar_songs")
-    async def route_query(request: Request, limit: int = 100, temperature: float = 0, songId: str = None, albumId: str = None, artistId: str = None):
+    async def similar_songs(request: Request, limit: int = 100, temperature: float = 0, songId: str = None, albumId: str = None, artistId: str = None):
         try:
             embedding = DBEmbedding(
                 songId=songId,
@@ -54,6 +49,24 @@ def create_app(with_dht):
         except Exception as e:
             logger.debug(e)
             raise HTTPException(status_code=404, detail=str(e))
+
+    @app.get("/similar_artists")
+    async def route_query(request: Request, limit: int = 100, songId: str = None, albumId: str = None, artistId: str = None):
+        try:
+            embedding = DBEmbedding(
+                songId=songId,
+                albumId=albumId,
+                artistId=artistId
+            ).get_embedding()
+            query = SimilarArtists(
+                embedding=embedding,
+                limit=limit,
+            )
+            return query.get_json()
+        except Exception as e:
+            error_message = traceback.format_exc()
+            logger.debug(error_message)
+            raise HTTPException(status_code=404, detail=str(error_message))
 
     # create_app() return
     return app, dht_node

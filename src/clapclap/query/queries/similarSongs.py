@@ -16,9 +16,8 @@ class SimilarSongs(Query):
             self.temperature = min(max(temperature, 1e-4), 1)
         self.limit = limit
         self.db = DB()
-        self.proximity_function = Embedding.embedding.cosine_distance
-        self.order_by_factor = 1
-        logger.debug(f"Query limit={limit}, temperature={temperature}")
+        logger.debug(
+            f"Query similar songs limit={limit}, temperature={temperature}")
         self.results = None
 
     def __str__(self):
@@ -42,8 +41,15 @@ class SimilarSongs(Query):
 
     def get_json(self):
         self.ensure_results()
-        output = [{"path": embedding.path, "songId": embedding.songId, "albumId": embedding.albumId,
-                   "artistId": embedding.artistId, "score": score} for embedding, score in self.results]
+        output = [
+            {
+                "path": embedding.path,
+                "songId": embedding.songId,
+                "albumId": embedding.albumId,
+                "artistId": embedding.artistId,
+                "score": score
+            } for embedding, score in self.results
+        ]
         return output
 
     def limit_by_temperature(self, session):
@@ -80,14 +86,15 @@ class SimilarSongs(Query):
 
     def query_similar(self, embedding):
         with self.db as session:
-            proximity_expr = self.proximity_function(embedding).label("metric")
+            proximity_expr = Embedding.embedding.cosine_distance.label(
+                "metric")
 
             query_limit = self.limit_by_temperature(session)
 
             logger.debug(
                 f"select close embedding in the db, query limit: {query_limit}")
             stmt = select(Embedding, proximity_expr)
-            stmt = stmt.order_by(self.order_by_factor * proximity_expr)
+            stmt = stmt.order_by(proximity_expr)
             stmt = stmt.limit(query_limit)
             results = session.execute(stmt).all()
 
