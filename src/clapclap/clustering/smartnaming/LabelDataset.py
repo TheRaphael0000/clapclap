@@ -8,6 +8,7 @@ from .labels.musicbrainz_genres import musicbrainz_genres
 from .labels.everynoise_genres import everynoise_genres
 from .labels.main_genres import main_genres
 from .labels.emotions import emotions
+from .labels.instruments import instruments
 
 
 class LabelDataset(Dataset):
@@ -25,6 +26,8 @@ class LabelDataset(Dataset):
             genres |= set(main_genres)
         if label_list == "emotions" or label_list == "all":
             genres |= set(emotions)
+        if label_list == "instruments" or label_list == "all":
+            genres |= set(instruments)
         if label_list == "stdin" or label_list == "all":
             genres |= get_stdin_labels()
         if label_list == "navidrome" or label_list == "all":
