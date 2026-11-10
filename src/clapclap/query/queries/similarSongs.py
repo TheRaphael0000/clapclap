@@ -9,6 +9,8 @@ from clapclap.utils.log import logger
 
 class SimilarSongs(Query):
     def __init__(self, embedding, temperature: float, limit: int):
+        logger.debug(
+            f"Query similar songs limit={limit}, temperature={temperature}")
         self.embedding = embedding
         if temperature <= 0:
             self.temperature = None
@@ -16,8 +18,6 @@ class SimilarSongs(Query):
             self.temperature = min(max(temperature, 1e-4), 1)
         self.limit = limit
         self.db = DB()
-        logger.debug(
-            f"Query similar songs limit={limit}, temperature={temperature}")
         self.results = None
 
     def __str__(self):
@@ -86,18 +86,14 @@ class SimilarSongs(Query):
 
     def query_similar(self, embedding):
         with self.db as session:
-            proximity_expr = Embedding.embedding.cosine_distance.label(
-                "metric")
-
+            proximity_expr = Embedding.embedding.cosine_distance(embedding)
             query_limit = self.limit_by_temperature(session)
-
-            logger.debug(
-                f"select close embedding in the db, query limit: {query_limit}")
-            stmt = select(Embedding, proximity_expr)
+            stmt = select(
+                Embedding,
+                proximity_expr
+            )
             stmt = stmt.order_by(proximity_expr)
             stmt = stmt.limit(query_limit)
             results = session.execute(stmt).all()
-
             results = self.results_by_temperature(results)
-
             return results

@@ -10,12 +10,11 @@ from clapclap.utils.log import logger
 
 class SimilarArtists(Query):
     def __init__(self, embedding, limit: int):
+        logger.debug(f"Query similar artists limit={limit}")
         self.embedding = embedding
         self.limit = limit
         self.db = DB()
         self.order_by_factor = 1
-        logger.debug(
-            f"Query similar artists limit={limit}")
         self.results = None
 
     def __str__(self):
@@ -45,15 +44,11 @@ class SimilarArtists(Query):
         return output
 
     def query_similar(self, embedding):
-        logger.debug(f"query similar artists, limit: {self.limit}")
         with self.db as session:
-            avg_embedding = func.avg(
-                Embedding.embedding).label("avg_embedding")
-
+            avg_embedding = func.avg(Embedding.embedding)
             distance_to_avg_embedding = avg_embedding.op("<=>")(
                 cast(embedding, VECTOR)
-            ).label("dist")
-
+            )
             stmt = select(
                 Embedding.artistId,
                 distance_to_avg_embedding
@@ -62,5 +57,4 @@ class SimilarArtists(Query):
             stmt = stmt.order_by(distance_to_avg_embedding)
             stmt = stmt.limit(self.limit)
             results = session.execute(stmt).all()
-
             return results
