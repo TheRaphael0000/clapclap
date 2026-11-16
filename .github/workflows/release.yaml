@@ -41,7 +41,7 @@ jobs:
               run: sed s/"0.0.0"/"${{ steps.version.outputs.version }}"/g -i pyproject.toml
 
             - name: Build
-              run: python -m build -w
+              run: python -m build
 
             - name: Publish to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
