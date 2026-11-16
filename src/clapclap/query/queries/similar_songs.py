@@ -2,7 +2,6 @@ from sqlalchemy import select, func
 import numpy as np
 
 from clapclap.db import DB, Embedding
-from clapclap.navidrome.navidrome import Navidrome
 from clapclap.query.queries.query import Query
 from clapclap.utils.logger import logger
 
@@ -29,6 +28,7 @@ class SimilarSongs(Query):
 
     def save_to_playlist(self, name: str):
         self.ensure_results()
+        from clapclap.navidrome.navidrome import Navidrome
         navidrome = Navidrome()
         ids = [embedding.songId for embedding, _ in self.results]
         navidrome.create_playlist(name=name, songIds=ids)

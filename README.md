@@ -8,43 +8,64 @@ It can be used as a song recommendation system for Navidrome.
 
 ## Recommended setup with Navidrome
 
-![](./doc/navidrome_setup_example.drawio.png)
+![schema clapclap setup with navidrome](https://raw.githubusercontent.com/TheRaphael0000/clapclap/refs/heads/main/doc/navidrome_setup_example.drawio.png)
 
 ## Install
 
 The same python package can be installed in two modes:
 
-- Light: Bare necessary to run the server
-- Full: All dependencies, can compute new embeddings (includes: pytorch, transformers, etc...)
+- Server: Bare necessary to run the server, no optional dependencies
+- Client: All dependencies, can compute new embeddings (includes: pytorch, transformers, etc...), require the '[all]' optional dependencies argument.
 
-For the navidrome extension please refer to the clapclap_navidrome repository: https://github.com/TheRaphael0000/clapclap_navidrome
+For the navidrome extension please refer to the clapclap_navidrome repository:
+https://github.com/TheRaphael0000/clapclap_navidrome
 
-### Install CLI with PyPi
+### Install with PyPi (recommended for client)
+
+```bash
+# client (recommended)
+pip install "clapclap-cli[client]"
+clapclap --version
+
+# server (not recommended, use docker instead)
+pip install "clapclap-cli[server]"
+clapclap --version
+clapclap serve
+```
+
+### Install with Docker (recommended for server)
 
 todo
 
-### Install Server with Docker
+### Install from python wheel
 
-todo
+```bash
+WHL_URL=$(curl -s https://api.github.com/repos/TheRaphael0000/clapclap/releases/latest | jq -r '.assets[0].browser_download_url')
+pip install "clapclap-cli[client,server] @ $WHL_URL"
+
+# test installation
+clapclap --version
+
+# configure, see configuration section
+vim ~/.config/clapclap/config.ini
+```
+
+Or get the latest wheel here: https://github.com/TheRaphael0000/clapclap/releases/latest
 
 ### Install from sources
 
 ```bash
-git clone https://github.com/TheRaphael0000/clapclap
+# clone repository
+git clone https://github.com/TheRaphael0000/clapclap.git
 cd clapclap
+# install with dev capabilities
+pip install -e ".[client,server]" --group dev
 
-# install all dependencies (~+1GB, for pytorch & transformers), allows embedding computations
-pip install ".[all]"
-# or install light version, for server run for example
-# pip install .
-# or install with dev capabilities
-# pip install -e ".[all]" --group dev
+# test installation
+clapclap --version
 
-# test install
-clapclap
-
-# if run locally
-vim ~/.config/clapclap/config.ini # see configuration section
+# configure, see configuration section
+vim ~/.config/clapclap/config.ini
 ```
 
 ## Configuration

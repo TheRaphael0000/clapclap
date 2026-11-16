@@ -1,6 +1,6 @@
 [project]
-name = "clapclap"
-description = "A CLAP CLI for navidrome"
+name = "clapclap-cli"
+description = "CLAP CLI for Navidrome. Track radio, album radio, artist radio, automatic playlists generation, etc..."
 readme = "README.md"
 requires-python = ">=3.13"
 version = "0.0.0"
@@ -24,40 +24,39 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
-    "fastapi[standard]>=0.141.1",
     "platformdirs>=4.13.0",
     "pgvector>=0.5.0",
     "sqlalchemy>=2.1.1",
-    "opendht>=4.4.1",
     "numpy>=2.5.3",
-    "filetype>=1.2.0",
-    "tinytag>=2.3.2",
-    "faiss-cpu>=1.15.1",
-    "uvicorn>=0.54.0",
     "u-msgpack-python>=2.8.0",
     "python-decouple>=3.8",
-    "scipy>=1.18.1",
-    "requests>=2.34.2",
-    "tqdm>=4.70.0",
     "psycopg[binary]>=3.3.6",
     "alembic>=1.20.0",
 ]
 
 [dependency-groups]
-dev = ["autopep8>=2.3.2", "hatch>=1.18.1"]
+dev = ["autopep8>=2.3.2", "hatch>=1.18.1", "build>=1.6.1", "twine>=7.0.0"]
 
 [project.optional-dependencies]
-all = [
+server = ["fastapi[standard]>=0.141.1", "opendht>=4.4.1", "uvicorn>=0.54.0"]
+client = [
     "transformers>=5.17.0",
     "scikit-learn>=1.9.1",
     "torch>=2.14.0",
     "torchcodec>=0.16.0",
     "torchaudio>=2.11.0",
     "umap-learn>=0.5.12",
+    "scipy>=1.18.1",
+    "requests>=2.34.2",
+    "tqdm>=4.70.0",
+    "tinytag>=2.3.2",
+    "filetype>=1.2.0",
 ]
 
 [project.urls]
-"Source code" = "https://github.com/TheRaphael0000/clapclap"
+"source" = "https://github.com/TheRaphael0000/clapclap"
+"download" = "https://github.com/TheRaphael0000/clapclap/releases/latest"
+"issues" = "https://github.com/TheRaphael0000/clapclap/issues"
 
 [project.scripts]
 clapclap = "clapclap.cli:main"
@@ -68,6 +67,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clapclap"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/.git", "/.github", "/.vscode", "/doc", "/tests", "/.env"]
 
 [tool.alembic]
 script_location = "%(here)s/alembic"

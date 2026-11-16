@@ -1,4 +1,5 @@
 import argparse
+from importlib.metadata import version
 
 from clapclap.update import add_subparser as add_subparser_update
 from clapclap.clustering import add_subparser as add_subparser_clustering
@@ -15,6 +16,13 @@ def parse():
         prog="clapclap CLI",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+# This automatically adds a --version flag and prints the version
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {version('clapclap')}"
+    )
+
     parser.add_argument(
         "-v", "--verbose",
         action="count",

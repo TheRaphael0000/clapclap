@@ -2,9 +2,9 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-COPY pyproject.toml .
-COPY README.md .
+COPY pyproject.toml README.md ./
+RUN pip install --only-deps ".[server]"
 COPY src src
-RUN pip install --no-cache-dir .
+RUN pip install --no-deps ".[server]"
 
 ENTRYPOINT ["clapclap"]
