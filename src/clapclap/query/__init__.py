@@ -1,5 +1,5 @@
 from __future__ import annotations
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
 

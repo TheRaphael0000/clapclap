@@ -11,7 +11,7 @@ from clapclap.db import DB, Embedding
 
 
 from clapclap.utils.config import config
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 from tqdm import tqdm
 import re
@@ -248,6 +248,8 @@ class Navidrome:
             total_count = session.scalar(
                 select(func.count()).select_from(Embedding))
             logger.info(f"Unmatched: {unmateched_count}/{total_count}")
+
+        return unmateched_count, total_count
 
     def start_scan(self, full_scan=False):
         args = {}

@@ -5,7 +5,7 @@ from sqlalchemy import select
 from clapclap.clustering.smartnaming.smartnaming import Smartnaming
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class ClusteringMethod:
@@ -133,4 +133,5 @@ class Clustering:
                     name=playlist_name, songIds=playlist_songs)
                 logger.info(
                     f"'{playlist_name}' created ({len(playlist_songs)} songs)")
-            logger.info(f"{len(playlists)} playlists created ")
+            logger.info(f"{len(playlists)} playlists created")
+            return len(playlists)

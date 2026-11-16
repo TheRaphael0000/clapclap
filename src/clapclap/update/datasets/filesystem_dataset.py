@@ -7,7 +7,7 @@ from torch.utils.data import IterableDataset
 from clapclap.update.datasets.db_checker import DBChecker
 from clapclap.update.datasets.quickscan import Quickscan
 from clapclap.utils.config import config
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class FilesystemDataset(IterableDataset):

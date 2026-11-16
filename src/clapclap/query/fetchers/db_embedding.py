@@ -2,8 +2,8 @@ from sqlalchemy import select
 from pgvector.sqlalchemy import avg
 
 from clapclap.db import DB, Embedding
-from clapclap.query.fetchers.embeddingFetcher import EmbeddingFetcher
-from clapclap.utils.log import logger
+from .embedding_fetcher import EmbeddingFetcher
+from clapclap.utils.logger import logger
 
 
 class DBEmbedding(EmbeddingFetcher):

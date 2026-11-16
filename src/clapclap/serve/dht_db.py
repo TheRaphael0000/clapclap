@@ -7,8 +7,9 @@ import io
 import numpy as np
 import umsgpack
 
-from clapclap.utils.consts import CLAP_EMBEDDING_SIZE, CLAP_MODEL
-from clapclap.utils.log import logger
+from clapclap.utils.config import config
+from clapclap.utils.consts import EMBEDDING_SIZE
+from clapclap.utils.logger import logger
 
 
 class DHTDB(DHTNode):
@@ -17,7 +18,7 @@ class DHTDB(DHTNode):
         super().__init__()
         self.db = DB()
         self.running_tasks = set()
-             
+
     async def start(self):
         await super().start()
         task = asyncio.create_task(self.publish_db())
@@ -27,7 +28,6 @@ class DHTDB(DHTNode):
     async def stop(self):
         await super().stop()
 
-        
     async def info(self):
         infos = await super().info()
         return infos
@@ -35,27 +35,24 @@ class DHTDB(DHTNode):
     def pack_fingerprint(self, fingerprint):
         # use a list of tuple to be sure we pack in the same order
         return umsgpack.packb([
-            ("model", CLAP_MODEL),
+            ("model", config.EMBEDDING_MODEL),
             ("fingerprint", fingerprint)
         ]).decode("latin-1")
-    
 
     def pack_embedding(self, embedding):
         buffer = io.BytesIO()
         np.save(buffer, np.array(embedding), allow_pickle=False)
         return buffer.getvalue()
-    
 
     def unpack_embedding(self, pack):
         try:
             array = np.load(pack, allow_pickle=False)
             print(array.shape, array.dtype)
-            if array.shape == (CLAP_EMBEDDING_SIZE,):
+            if array.shape == (EMBEDDING_SIZE,):
                 raise Exception("Invalid shape")
             return array
         except Exception as e:
             logger.error("Invalid embedding found \n{e}")
-
 
     async def publish_db(self):
         logger.info("publishing...")
@@ -66,7 +63,6 @@ class DHTDB(DHTNode):
                 await self.publish_embedding(embedding)
         logger.info("publishing finished")
 
-        
     async def publish_embedding(self, embedding):
         key = self.pack_fingerprint(embedding.fingerprint)
         value = self.pack_embedding(embedding.embedding)
@@ -82,7 +78,6 @@ class DHTDB(DHTNode):
         await self.put_value(key, value)
         logger.info(f"Written on the DHT: '{embedding.path}'")
 
-
     async def query(self, fingerprint):
         key = self.pack_fingerprint(fingerprint)
         values = await self.get_value(key)
@@ -94,4 +89,3 @@ class DHTDB(DHTNode):
             except Exception:
                 pass
         return None
-    

@@ -10,8 +10,7 @@ from tinytag import TinyTag
 from transformers import ClapAudioModelWithProjection, ClapProcessor
 
 from clapclap.utils import Timer
-from clapclap.utils.consts import CLAP_PROCESSOR, CLAP_MODEL, CLAP_SAMPLING_RATE
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 from clapclap.utils.config import config
 
 
@@ -105,7 +104,7 @@ def get_slices_timestamps(duration, max_duration, slices):
     return slices_timestamps
 
 
-def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
+def resample_with_ffmpeg(audio_bytes, method, sampling_rate, resample_duration=0, slices=0):
     cmd = [
         "ffmpeg",
         "-nostdin",
@@ -113,7 +112,7 @@ def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
         "-i", "pipe:0",
         "-map", "0:a:0",
         "-ac", "1",
-        "-ar", str(CLAP_SAMPLING_RATE),
+        "-ar", str(sampling_rate),
     ]
 
     if method == "start":
@@ -140,7 +139,7 @@ def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
         "pipe:1"
     ])
 
-    # print(" ".join(cmd))
+    logger.debug(f"running command: {' '.join(cmd)}")
     result = subprocess.run(
         cmd,
         input=audio_bytes,
@@ -157,29 +156,34 @@ def resample_with_ffmpeg(audio_bytes, method, resample_duration=0, slices=0):
 
 class AudioFeatureExtractor:
     def __init__(self, max_workers, ignore_existing_fingerprint):
-        self.embedding_method = config.EMBEDDING_METHOD
-        self.embedding_duration = float(config.EMBEDDING_DURATION)
-        self.embedding_method_slices = int(config.EMBEDDING_METHOD_SLICES)
+        self.preprocessing_method = config.PREPROCESSING_METHOD
+        self.preprocessing_duration = float(config.PREPROCESSING_DURATION)
+        self.preprocessing_method_slices = int(
+            config.PREPROCESSING_METHOD_SLICES)
+        self.preprocessing_sampling_rate = int(
+            config.PREPROCESSING_SAMPLING_RATE)
+
         self.max_workers = max_workers
         self.ignore_existing_fingerprint = ignore_existing_fingerprint
 
-        logger.debug(f"max_workers: {self.max_workers}")
+        logger.debug(f"max workers: {self.max_workers}")
 
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        logger.debug(f"Embedding Projection Device: {self.device}")
+        logger.debug(f"embedding projection device: {self.device}")
 
         logger.debug("loading clap model...")
         try:
             self.processor = ClapProcessor.from_pretrained(
-                CLAP_PROCESSOR, local_files_only=True)
+                config.EMBEDDING_PROCESSOR, local_files_only=True)
             self.model = ClapAudioModelWithProjection.from_pretrained(
-                CLAP_MODEL, local_files_only=True)
+                config.EMBEDDING_MODEL, local_files_only=True)
         except Exception as e:
-            print(e)
-            self.processor = ClapProcessor.from_pretrained(CLAP_PROCESSOR)
+            logger.error(e)
+            self.processor = ClapProcessor.from_pretrained(
+                config.EMBEDDING_PROCESSOR)
             self.model = ClapAudioModelWithProjection.from_pretrained(
-                CLAP_MODEL)
+                config.EMBEDDING_MODEL)
         logger.debug("clap model loaded")
 
         self.model = self.model.to(self.device)
@@ -201,14 +205,14 @@ class AudioFeatureExtractor:
 
         batch_size = len(fingerprints)
         output = list(zip(fingerprints, embeddings,
-                      batch_size * [self.embedding_method], batch_size * [self.embedding_duration]))
+                      batch_size * [self.preprocessing_method], batch_size * [self.preprocessing_duration]))
 
         logger.debug(f"process batch end {len(output)}")
         return output
 
     def resample(self, audio_bytes):
         with Timer("resample"):
-            return resample_with_ffmpeg(audio_bytes, self.embedding_method, self.embedding_duration, self.embedding_method_slices)
+            return resample_with_ffmpeg(audio_bytes, self.preprocessing_method, self.preprocessing_sampling_rate, self.preprocessing_duration, self.preprocessing_method_slices)
 
     def fingerprint(self, audio_bytes):
         with Timer("fingerprint"):
@@ -232,7 +236,7 @@ class AudioFeatureExtractor:
         with Timer("clap processor"):
             inputs = self.processor(
                 audio=valid_audio_arrays,
-                sampling_rate=CLAP_SAMPLING_RATE,
+                sampling_rate=self.preprocessing_sampling_rate,
                 return_tensors="pt"
             )
         with Timer("clap projection"):

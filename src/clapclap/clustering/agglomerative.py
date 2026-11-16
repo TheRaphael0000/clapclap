@@ -3,8 +3,6 @@ import numpy as np
 
 from clapclap.clustering.clustering import ClusteringMethod
 
-from clapclap.utils.log import logger
-
 
 class AgglomerativeClusteringMethod(ClusteringMethod):
     def __init__(self, k):

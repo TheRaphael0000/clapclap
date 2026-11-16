@@ -2,7 +2,7 @@ from __future__ import annotations
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
 
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
@@ -60,7 +60,10 @@ def command_sync(args):
     logger.debug("command navidrome update")
     from .navidrome import Navidrome
     navidrome = Navidrome()
-    navidrome.update_ids(limit=args.limit)
+    print("Updating clapclap database using navidrome")
+    unmateched_count, total_count = navidrome.update_ids(limit=args.limit)
+    print(
+        f"clapclap database updated using navidrome (Unmatched: {unmateched_count}/{total_count})")
 
 
 def command_scan(args):
@@ -68,8 +71,11 @@ def command_scan(args):
     from .navidrome import Navidrome
     navidrome = Navidrome()
     if not args.wait:
+        print(
+            f"Starting remote navidrome {'full scan' if args.full_scan else 'scan'}")
         navidrome.start_scan(args.full_scan)
     if not args.detach or args.wait:
+        print("Waiting for navidrome scan to complete")
         navidrome.scan_progress()
 
 

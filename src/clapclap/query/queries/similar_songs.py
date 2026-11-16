@@ -4,7 +4,7 @@ import numpy as np
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
 from clapclap.query.queries.query import Query
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class SimilarSongs(Query):

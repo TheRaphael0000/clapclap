@@ -3,19 +3,20 @@ from fastapi import FastAPI
 import opendht.aio as dht
 
 from clapclap.utils.config import config
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class DHTNode:
     def __init__(self):
         logger.info("initializing")
 
-        self.bootstrap_host, self.bootstrap_port = config.DHT_BOOTSTRAP.split(":")
+        self.bootstrap_host, self.bootstrap_port = config.DHT_BOOTSTRAP.split(
+            ":")
         self.network = int(config.DHT_NETWORK)
 
         logger.info(f"bootstrap: {self.bootstrap_host}:{self.bootstrap_port}")
         logger.info(f"network: {self.network}")
-        
+
         self.config = dht.DhtConfig()
         self.config.setMaintainStorage(True)
         self.config.setNetwork(self.network)
@@ -35,18 +36,16 @@ class DHTNode:
             await self.dht_runner.shutdown()
             logger.info("DHT Node shut down successfully.")
 
-
     @asynccontextmanager
     async def lifespan(self, app: FastAPI):
         await self.start()
         yield
         await self.stop()
 
-
     async def info(self):
         try:
-            return { 
-            "dht": {
+            return {
+                "dht": {
                     "isRunning": self.dht_runner.isRunning(),
                     "StorageLog": [l for l in self.dht_runner.getStorageLog().split("\n") if len(l) > 0][-1],
                     "Network": self.network,
@@ -58,7 +57,6 @@ class DHTNode:
             logger.error(e)
             return {}
 
-
     async def put_value(self, key: str, value: bytes):
         try:
             key_hash = dht.InfoHash.get(key)
@@ -68,7 +66,6 @@ class DHTNode:
         except Exception as e:
             logger.error(e)
             raise e
-
 
     async def get_value(self, key: bytes):
         try:

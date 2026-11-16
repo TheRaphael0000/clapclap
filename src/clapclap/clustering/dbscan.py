@@ -3,7 +3,7 @@ import numpy as np
 
 from clapclap.clustering.clustering import ClusteringMethod
 
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class DBScanMethod(ClusteringMethod):

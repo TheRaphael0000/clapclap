@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from clapclap.utils import Timer
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class Quickscan:

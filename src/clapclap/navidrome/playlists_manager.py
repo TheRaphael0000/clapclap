@@ -1,7 +1,8 @@
 import json
 
 from clapclap.navidrome.navidrome import Navidrome
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
+
 
 class PlaylistsManager:
     def __init__(self, regex, delete, stats):
@@ -13,12 +14,15 @@ class PlaylistsManager:
     def run(self):
         playlists = self.navidrome.get_playlists_regex(self.regex)
 
+        if self.delete:
+            print(f"Deleting {len(playlists)} playlist(s)")
+
         for playlist in playlists:
             id, name = playlist["id"], playlist["name"]
 
             if self.delete:
                 self.navidrome.delete_playlist(id=id)
-                print(name)
+                logger.info(f"{name} deleted")
             elif self.stats:
                 stats = self.navidrome.get_playlist_stats(id=id)
                 print(json.dumps(stats))

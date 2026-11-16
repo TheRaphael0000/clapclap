@@ -3,7 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from clapclap.utils.config import config
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 from .Base import Base
 

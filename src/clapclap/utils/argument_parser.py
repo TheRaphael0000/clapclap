@@ -15,7 +15,12 @@ def parse():
         prog="clapclap CLI",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--debug", action="store_true", help="Show debug logs")
+    parser.add_argument(
+        "-v", "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (-v for INFO, -vv for DEBUG)"
+    )
     parser.add_argument("--config", type=str, help="Path to the config file",
                         default=config.default_config_path())
 

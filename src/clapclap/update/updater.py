@@ -11,7 +11,7 @@ from clapclap.db import DB, Embedding
 from clapclap.update.extractor import AudioFeatureExtractor
 from clapclap.update.datasets import FilesystemDataset, NavidromeDataset
 from clapclap.utils import Timer
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 from clapclap.utils.types import DataSource
 
 

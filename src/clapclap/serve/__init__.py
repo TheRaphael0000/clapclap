@@ -1,7 +1,7 @@
 from __future__ import annotations
 import argparse
 from argparse import _SubParsersAction, ArgumentParser
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
@@ -18,6 +18,7 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 def command(args):
     logger.debug("command serve")
+    print("Starting clapclap REST server")
     from .api import API
     api = API(host=args.host, port=args.port)
     api.start()

@@ -5,7 +5,6 @@ from typing import get_args
 
 from clapclap.clustering.clustering import Clustering
 from clapclap.utils.types import LabelList
-from clapclap.utils.log import logger
 
 
 def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
@@ -110,29 +109,35 @@ def get_common_args(args):
     }
 
 
+def run(clustering: Clustering):
+    print(f"Starting clustering with {clustering.method.__class__.__name__}")
+    playlist_created = clustering.process()
+    print(f"{playlist_created} playlist(s) created")
+
+
 def kmean_command(args):
     from clapclap.clustering.kmeans import KMeansMethod
     clustering = Clustering(**get_common_args(args),
                             method=KMeansMethod(k=args.n_clusters, max_iter=args.max_iter, n_init=args.n_init))
-    clustering.process()
+    run(clustering)
 
 
 def agglomerative_command(args):
     from clapclap.clustering.agglomerative import AgglomerativeClusteringMethod
     clustering = Clustering(
         **get_common_args(args), method=AgglomerativeClusteringMethod(k=args.n_clusters))
-    clustering.process()
+    run(clustering)
 
 
 def dbscan_command(args):
     from clapclap.clustering.dbscan import DBScanMethod
     clustering = Clustering(
         **get_common_args(args), method=DBScanMethod(eps=args.eps, min_samples=args.min_samples))
-    clustering.process()
+    run(clustering)
 
 
 def hdbscan_command(args):
     from clapclap.clustering.hdbscan import HDBScanMethod
     clustering = Clustering(
         **get_common_args(args), method=HDBScanMethod())
-    clustering.process()
+    run(clustering)

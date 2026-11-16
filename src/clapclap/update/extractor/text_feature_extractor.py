@@ -1,8 +1,8 @@
 import torch
 from transformers import AutoTokenizer, ClapTextModelWithProjection
 from clapclap.utils import Timer
-from clapclap.utils.consts import CLAP_MODEL, CLAP_PROCESSOR
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
+from clapclap.utils.config import config
 
 
 class TextFeatureExtractor:
@@ -12,13 +12,14 @@ class TextFeatureExtractor:
         logger.debug(f"Embedding Projection Device: {self.device}")
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(
-                CLAP_PROCESSOR, local_files_only=True)
+                config.EMBEDDING_PROCESSOR, local_files_only=True)
             self.model = ClapTextModelWithProjection.from_pretrained(
-                CLAP_MODEL, local_files_only=True)
+                config.EMBEDDING_MODEL, local_files_only=True)
         except Exception as e:
-            self.tokenizer = AutoTokenizer.from_pretrained(CLAP_PROCESSOR)
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                config.EMBEDDING_PROCESSOR)
             self.model = ClapTextModelWithProjection.from_pretrained(
-                CLAP_MODEL)
+                config.EMBEDDING_MODEL)
 
         self.model = self.model.to(self.device)
         self.model.eval()

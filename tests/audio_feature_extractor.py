@@ -26,7 +26,7 @@ class TestAudioFeatureExtractor(unittest.TestCase):
         with open(file, "rb") as f:
             input_bytes = f.read()
             output_bytes = resample_with_ffmpeg(
-                input_bytes, "slice", resample_duration=resample_duration, slices=slices)
+                input_bytes, "slice", 48000, resample_duration=resample_duration, slices=slices)
         output_files = tests_output_folder / \
             (str(file.name) + f"_slice_{resample_duration}_{slices}.raw")
         with open(output_files, "wb") as f:
@@ -39,7 +39,7 @@ class TestAudioFeatureExtractor(unittest.TestCase):
         with open(file, "rb") as f:
             input_bytes = f.read()
             output_bytes = resample_with_ffmpeg(
-                input_bytes, "start", resample_duration=resample_duration)
+                input_bytes, "start", 48000, resample_duration=resample_duration)
         output_files = tests_output_folder / \
             (str(file.name) + f"_start_{resample_duration}.raw")
         with open(output_files, "wb") as f:
@@ -51,7 +51,7 @@ class TestAudioFeatureExtractor(unittest.TestCase):
         with open(file, "rb") as f:
             input_bytes = f.read()
             output_bytes = resample_with_ffmpeg(
-                input_bytes, "full")
+                input_bytes, "full", 48000)
         output_files = tests_output_folder / \
             (str(file.name) + f"_full.raw")
         with open(output_files, "wb") as f:

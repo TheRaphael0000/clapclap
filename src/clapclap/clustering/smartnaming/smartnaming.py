@@ -2,7 +2,7 @@ import numpy as np
 
 from scipy.spatial.distance import cdist
 
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class Smartnaming:

@@ -13,22 +13,22 @@ def get_tag(tinytag, tag):
 
 
 class Metadata:
-    def __init__(self, fingerprint, replaygain):
-        self.fingerprint = fingerprint
-        self.replaygain = replaygain
+    def __init__(self, no_fingerprint, no_replaygain):
+        self.no_fingerprint = no_fingerprint
+        self.no_replaygain = no_replaygain
 
-        if not self.fingerprint and not self.replaygain:
+        if self.no_fingerprint and self.no_replaygain:
             raise Exception("Please select at least one tool checker")
         self.dataset = FilesystemDatasetAll()
 
     def run(self):
         for subpath, fullpath, _, _, _ in self.dataset:
             tinytag = TinyTag.get(filename=fullpath)
-            if self.fingerprint:
+            if not self.no_fingerprint:
                 tag = get_tag(tinytag, "acoustid_fingerprint")
                 if len(tag) <= 0:
                     print(f"'{subpath}' - fingerprint missing")
-            if self.replaygain:
+            if not self.no_replaygain:
                 tag = get_tag(tinytag, "replaygain_track_gain")
                 if len(tag) <= 0:
                     print(f"'{subpath}' - replaygain missing")

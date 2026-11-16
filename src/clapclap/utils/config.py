@@ -1,6 +1,6 @@
 from pathlib import Path
 from decouple import Config, RepositoryIni
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 class Configuration:
@@ -75,18 +75,32 @@ class Configuration:
     def NAVIDROME_PLAYLIST_PREFIX(self) -> str:
         return self.config("NAVIDROME_PLAYLIST_PREFIX", default="")
 
+    # --- Preprocessing ---
+    @property
+    def PREPROCESSING_METHOD(self) -> str:
+        return self.config("PREPROCESSING_METHOD", default="slice")
+
+    @property
+    def PREPROCESSING_METHOD_SLICES(self) -> str:
+        return self.config("PREPROCESSING_METHOD_SLICES", default="4")
+
+    @property
+    def PREPROCESSING_SAMPLING_RATE(self) -> str:
+        return self.config("PREPROCESSING_SAMPLING_RATE", default="48000")
+
+    @property
+    def PREPROCESSING_DURATION(self) -> str:
+        return self.config("PREPROCESSING_DURATION", default="150")
+
     # --- Embedding ---
-    @property
-    def EMBEDDING_METHOD(self) -> str:
-        return self.config("EMBEDDING_METHOD", default="slice")
 
     @property
-    def EMBEDDING_DURATION(self) -> str:
-        return self.config("EMBEDDING_DURATION", default="150")
+    def EMBEDDING_PROCESSOR(self) -> str:
+        return self.config("EMBEDDING_PROCESSOR", default="laion/larger_clap_music_and_speech")
 
     @property
-    def EMBEDDING_METHOD_SLICES(self) -> str:
-        return self.config("EMBEDDING_METHOD_SLICES", default="4")
+    def EMBEDDING_MODEL(self) -> str:
+        return self.config("EMBEDDING_MODEL", default="laion/larger_clap_music_and_speech")
 
     def default_config_path(self):
         filename = "config.ini"

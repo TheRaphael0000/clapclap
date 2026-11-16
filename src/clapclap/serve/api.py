@@ -8,7 +8,7 @@ from clapclap.query.queries.similar_songs import SimilarSongs
 from clapclap.query.queries.similar_artists import SimilarArtists
 from clapclap.serve.db_data import DBDATA
 from clapclap.serve.dht_db import DHTDB
-from clapclap.utils.log import logger
+from clapclap.utils.logger import logger
 
 
 def create_app(with_dht):
