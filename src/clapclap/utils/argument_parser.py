@@ -16,11 +16,11 @@ def parse():
         prog="clapclap CLI",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-# This automatically adds a --version flag and prints the version
+    # This automatically adds a --version flag and prints the version
     parser.add_argument(
         "--version",
         action="version",
-        version=f"%(prog)s {version('clapclap')}"
+        version=f"%(prog)s {version("clapclap-cli")}"
     )
 
     parser.add_argument(

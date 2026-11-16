@@ -37,7 +37,7 @@ clapclap serve
 
 todo
 
-### Install from python wheel
+### Install from GitHub release
 
 ```bash
 WHL_URL=$(curl -s https://api.github.com/repos/TheRaphael0000/clapclap/releases/latest | jq -r '.assets[0].browser_download_url')
