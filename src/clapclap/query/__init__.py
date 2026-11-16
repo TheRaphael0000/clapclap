@@ -55,8 +55,8 @@ def add_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 
 
 def process_query(embedding, args, name):
-    from .queries.similarSongs import SimilarSongs
-    from .queries.similarArtists import SimilarArtists
+    from .queries.similar_songs import SimilarSongs
+    from .queries.similar_artists import SimilarArtists
 
     if args.artists:
         query = SimilarArtists(
@@ -89,7 +89,7 @@ def process_query(embedding, args, name):
 
 def query_db_command(args):
     logger.debug("command query simlilarity")
-    from .fetchers.dbEmbedding import DBEmbedding
+    from .fetchers.db_embedding import DBEmbedding
     embedding = DBEmbedding(
         path=args.path,
         songId=args.songId,
@@ -101,6 +101,6 @@ def query_db_command(args):
 
 def query_text_command(args):
     logger.debug("command query text")
-    from .fetchers.textEmbedding import TextEmbedding
+    from .fetchers.text_embedding import TextEmbedding
     embedding = TextEmbedding(text=args.text).get_embedding()
     process_query(embedding, args, args.name or args.text)

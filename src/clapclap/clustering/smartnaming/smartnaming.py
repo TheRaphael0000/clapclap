@@ -5,7 +5,7 @@ from scipy.spatial.distance import cdist
 from clapclap.utils.log import logger
 
 
-class SmartNaming:
+class Smartnaming:
     def __init__(self, labels, sizes, label_sep, level_sep, reducer):
         self.labels = labels
         self.sizes = sizes
@@ -15,8 +15,8 @@ class SmartNaming:
         self.Xs = []
         self.Ys = []
 
-        from clapclap.clustering.smartnaming.LabelDataset import LabelDataset
-        from clapclap.update.text_feature_extractor import TextFeatureExtractor
+        from clapclap.clustering.smartnaming.label_dataset import LabelDataset
+        from clapclap.update.extractor import TextFeatureExtractor
         self.te = TextFeatureExtractor()
 
         for label in self.labels:

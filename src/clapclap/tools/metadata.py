@@ -1,7 +1,5 @@
 from tinytag import TinyTag
-
-from clapclap.update.dataset import FilesystemDatasetAll
-from clapclap.utils.log import logger
+from clapclap.update.datasets import FilesystemDatasetAll
 
 
 def get_tag(tinytag, tag):

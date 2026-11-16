@@ -2,7 +2,7 @@ import collections
 import numpy as np
 from sqlalchemy import select
 
-from clapclap.clustering.smartnaming.SmartNaming import SmartNaming
+from clapclap.clustering.smartnaming.smartnaming import Smartnaming
 from clapclap.db import DB, Embedding
 from clapclap.navidrome.navidrome import Navidrome
 from clapclap.utils.log import logger
@@ -83,7 +83,7 @@ class Clustering:
         playlists = []
         if not self.no_smart_naming:
             logger.info("Computing smart-names")
-            smart_naming = SmartNaming(
+            smart_naming = Smartnaming(
                 self.smart_naming_labels,
                 self.smart_naming_sizes,
                 self.smart_naming_label_sep,

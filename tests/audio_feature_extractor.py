@@ -1,5 +1,5 @@
 import unittest
-from clapclap.update.audio_feature_extractor import resample_with_ffmpeg, get_duration, get_slices_timestamps
+from clapclap.update.extractor.audio_feature_extractor import resample_with_ffmpeg, get_duration, get_slices_timestamps
 import glob
 from pathlib import Path
 

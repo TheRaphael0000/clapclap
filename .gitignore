@@ -12,6 +12,7 @@ music
 *.tmp
 
 data*/
+!datasets*
 
 .env
 

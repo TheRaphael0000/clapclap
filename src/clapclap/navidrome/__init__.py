@@ -75,10 +75,10 @@ def command_scan(args):
 
 def command_playlist(args):
     logger.debug("command navidrome playlist")
-    from .playlistsManager import PlaylistsManager
-    playlistsManager = PlaylistsManager(
+    from .playlists_manager import PlaylistsManager
+    playlists_manager = PlaylistsManager(
         regex=args.regex, delete=args.delete, stats=args.stats)
-    playlistsManager.run()
+    playlists_manager.run()
 
 
 def command_playlists_fuse(args):

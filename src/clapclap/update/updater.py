@@ -8,8 +8,8 @@ from sqlalchemy.dialects.postgresql import insert
 from torch.utils.data import DataLoader
 
 from clapclap.db import DB, Embedding
-from clapclap.update.audio_feature_extractor import AudioFeatureExtractor
-from clapclap.update.dataset import FilesystemDataset, NavidromeDataset, FilesystemDatasetAll
+from clapclap.update.extractor import AudioFeatureExtractor
+from clapclap.update.datasets import FilesystemDataset, NavidromeDataset
 from clapclap.utils import Timer
 from clapclap.utils.log import logger
 from clapclap.utils.types import DataSource

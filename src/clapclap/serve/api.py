@@ -3,9 +3,9 @@ import uvicorn
 import traceback
 
 from clapclap.db import DB
-from clapclap.query.fetchers.dbEmbedding import DBEmbedding
-from clapclap.query.queries.similarSongs import SimilarSongs
-from clapclap.query.queries.similarArtists import SimilarArtists
+from clapclap.query.fetchers.db_embedding import DBEmbedding
+from clapclap.query.queries.similar_songs import SimilarSongs
+from clapclap.query.queries.similar_artists import SimilarArtists
 from clapclap.serve.db_data import DBDATA
 from clapclap.serve.dht_db import DHTDB
 from clapclap.utils.log import logger
